@@ -26,6 +26,7 @@ usage()
 	echo "ramboot            -build ramboot image"
 	echo "multi-npu_boot     -build boot image for multi-npu board"
 	echo "yocto              -build yocto rootfs"
+	echo "debian_base        -build base debian system"
 	echo "debian             -build debian rootfs"
 	echo "pcba               -build pcba"
 	echo "recovery           -build recovery"
