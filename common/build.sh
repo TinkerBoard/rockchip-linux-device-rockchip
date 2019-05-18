@@ -131,7 +131,8 @@ function build_multi-npu_boot(){
 }
 
 function build_rootfs(){
-	build_buildroot
+	#build_buildroot
+	build_debian
 }
 
 function build_yocto(){
