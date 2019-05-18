@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [ ! $VERSION_NUMBER ]; then
+	VERSION_NUMBER="eng_by"_"$USER"_"$(date  +%Y%m%d%H%M_%Z)"
+else
+	VERSION_NUMBER="$VERSION_NUMBER"_"$(date  +%Y%m%d%H%M_%Z)"
+fi
+echo "VERSION_NUMBER: " "$VERSION_NUMBER"
 CMD=`realpath $0`
 COMMON_DIR=`dirname $CMD`
 TOP_DIR=$(realpath $COMMON_DIR/../../..)
@@ -147,7 +153,7 @@ function build_debian(){
         echo "RK_DISTRO_DEFCONFIG=$RK_DISTRO_DEFCONFIG"
 	echo "========================================"
 	#/usr/bin/time -f "you take %E to build debian" $TOP_DIR/distro/make.sh $RK_DISTRO_DEFCONFIG
-	cd $TOP_DIR/debian && VERSION=debug ARCH=$RK_ARCH ./mk-rootfs-stretch-arm64.sh && ./mk-image.sh && cd -
+	cd $TOP_DIR/debian && VERSION_NUMBER=$VERSION_NUMBER VERSION=debug ARCH=$RK_ARCH ./mk-rootfs-stretch-arm64.sh && ./mk-image.sh && cd -
 	if [ $? -eq 0 ]; then
                 echo "====Build debian ok!===="
         else
