@@ -144,11 +144,26 @@ function build_debian(){
 	echo "TARGET_ARCH=$RK_ARCH"
         echo "RK_DISTRO_DEFCONFIG=$RK_DISTRO_DEFCONFIG"
 	echo "========================================"
-	/usr/bin/time -f "you take %E to build debian" $TOP_DIR/distro/make.sh $RK_DISTRO_DEFCONFIG
-        if [ $? -eq 0 ]; then
+	#/usr/bin/time -f "you take %E to build debian" $TOP_DIR/distro/make.sh $RK_DISTRO_DEFCONFIG
+	cd $TOP_DIR/debian && VERSION=debug ARCH=$RK_ARCH ./mk-rootfs-stretch-arm64.sh && ./mk-image.sh && cd -
+	if [ $? -eq 0 ]; then
                 echo "====Build debian ok!===="
         else
                 echo "====Build debian failed!===="
+                exit 1
+        fi
+}
+
+function build_debian_base(){
+        # build debian base
+        echo "===========Start build debian base==========="
+        echo "TARGET_ARCH=$RK_ARCH"
+        echo "========================================"
+        cd $TOP_DIR/debian && RELEASE=stretch TARGET=desktop ARCH=$RK_ARCH ./mk-base-debian.sh && cd -
+        if [ $? -eq 0 ]; then
+                echo "====Build debian base ok!===="
+        else
+                echo "====Build debian base failed!===="
                 exit 1
         fi
 }
@@ -331,6 +346,9 @@ elif [ $BUILD_TARGET == pcba ];then
     exit 0
 elif [ $BUILD_TARGET == yocto ];then
     build_yocto
+    exit 0
+elif [ $BUILD_TARGET == debian_base ];then
+    build_debian_base
     exit 0
 elif [ $BUILD_TARGET == debian ];then
     build_debian
