@@ -301,8 +301,8 @@ function build_ota_ab_updateimg(){
 
 function build_save(){
 	IMAGE_PATH=$TOP_DIR/rockdev
-	DATE=$(date  +%Y%m%d.%H%M)
-	STUB_PATH=Image/"$RK_KERNEL_DTS"_"$DATE"_RELEASE_TEST
+	#DATE=$(date  +%Y%m%d.%H%M)
+	STUB_PATH=Image/"$RK_KERNEL_DTS"_DEBIAN_"$VERSION_NUMBER"
 	STUB_PATH="$(echo $STUB_PATH | tr '[:lower:]' '[:upper:]')"
 	export STUB_PATH=$TOP_DIR/$STUB_PATH
 	export STUB_PATCH_PATH=$STUB_PATH/PATCHES
