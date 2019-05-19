@@ -27,21 +27,22 @@ usage()
 	echo "uboot              -build uboot"
 	echo "kernel             -build kernel"
 	echo "modules            -build kernel modules"
-	echo "rootfs             -build default rootfs, currently build buildroot as default"
+	echo "rootfs             -build default rootfs, currently build debian as default"
 	echo "buildroot          -build buildroot rootfs"
 	echo "ramboot            -build ramboot image"
 	echo "multi-npu_boot     -build boot image for multi-npu board"
 	echo "yocto              -build yocto rootfs"
 	echo "debian_base        -build base debian system"
+	echo "debian_packages    -update local Debian packages"
 	echo "debian             -build debian rootfs"
 	echo "pcba               -build pcba"
 	echo "recovery           -build recovery"
-	echo "all                -build uboot, kernel, rootfs, recovery image"
-	echo "cleanall           -clean uboot, kernel, rootfs, recovery"
+	echo "all                -build uboot, kernel, rootfs, and recovery images"
+	echo "cleanall           -clean uboot, kernel, rootfs, and recovery images"
 	echo "firmware           -pack all the image we need to boot up system"
 	echo "updateimg          -pack update image"
 	echo "otapackage         -pack ab update otapackage image"
-	echo "save               -save images, patches, commands used to debug"
+	echo "save               -save images, patches, and commands used to debug"
 	echo "default            -build all modules"
 }
 
@@ -172,6 +173,16 @@ function build_debian_base(){
                 echo "====Build debian base ok!===="
         else
                 echo "====Build debian base failed!===="
+                exit 1
+        fi
+}
+
+function update_debian_packages(){
+        cd $TOP_DIR/debian && ./update-local-packages-tinker_edge_r.sh && cd -
+        if [ $? -eq 0 ]; then
+                echo "Succeeded to update local Debian packages."
+        else
+                echo "Failed to update local Debian packages."
                 exit 1
         fi
 }
@@ -357,6 +368,9 @@ elif [ $BUILD_TARGET == yocto ];then
     exit 0
 elif [ $BUILD_TARGET == debian_base ];then
     build_debian_base
+    exit 0
+elif [ $BUILD_TARGET == debian_packages ];then
+    update_debian_packages
     exit 0
 elif [ $BUILD_TARGET == debian ];then
     build_debian
