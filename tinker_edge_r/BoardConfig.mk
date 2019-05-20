@@ -3,7 +3,7 @@
 # Target arch
 export RK_ARCH=arm64
 # Uboot defconfig
-export RK_UBOOT_DEFCONFIG=rk3399pro
+export RK_UBOOT_DEFCONFIG=tinker_edge_r
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=tinker_edge_r_defconfig
 # Kernel dts
