@@ -31,13 +31,13 @@ export RK_ROOTFS_TYPE=ext4
 # rootfs image path
 export RK_ROOTFS_IMG=debian/linaro-rootfs.img
 # Set oem partition type, including ext2 squashfs
-export RK_OEM_FS_TYPE=ext2
+export RK_OEM_FS_TYPE=
 # Set userdata partition type, including ext2, fat
 export RK_USERDATA_FS_TYPE=ext2
 # Set flash type. support <emmc, nand, spi_nand, spi_nor>
 export RK_STORAGE_TYPE=emmc
 #OEM config
-export RK_OEM_DIR=oem_normal
+export RK_OEM_DIR=
 #userdata config
 export RK_USERDATA_DIR=userdata_normal
 #misc image
