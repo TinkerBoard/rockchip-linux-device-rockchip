@@ -318,7 +318,7 @@ function build_save(){
 	$TOP_DIR/.repo/repo/repo forall -c "$TOP_DIR/device/rockchip/common/gen_patches_body.sh"
 
 	#Copy stubs
-	$TOP_DIR/.repo/repo/repo manifest -r -o $STUB_PATH/manifest_${DATE}.xml
+	$TOP_DIR/.repo/repo/repo manifest -r -o $STUB_PATH/manifest_$(echo "$RK_KERNEL_DTS"_DEBIAN_"$VERSION_NUMBER"_"$VERSION" | tr '[:lower:]' '[:upper:]').xml
 	mkdir -p $STUB_PATCH_PATH/kernel
 	cp $TOP_DIR/kernel/.config $STUB_PATCH_PATH/kernel
 	cp $TOP_DIR/kernel/vmlinux $STUB_PATCH_PATH/kernel
