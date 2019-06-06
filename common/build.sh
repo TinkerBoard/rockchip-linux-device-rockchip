@@ -42,15 +42,10 @@ function usage()
 	echo "firmware           -pack all the image we need to boot up system"
 	echo "updateimg          -pack update image"
 	echo "otapackage         -pack ab update otapackage image"
-<<<<<<< HEAD
-	echo "save               -save images, patches, and commands used to debug"
-	echo "default            -build all modules"
-=======
 	echo "save               -save images, patches, commands used to debug"
 	echo "allsave            -build all & firmware & updateimg & save"
 	echo ""
 	echo "Default option is 'allsave'."
->>>>>>> asus/rk3399pro_linux_release_v1.0.0_20190528_20190531
 }
 
 function build_uboot(){
@@ -141,14 +136,6 @@ function build_multi-npu_boot(){
 	fi
 }
 
-<<<<<<< HEAD
-function build_rootfs(){
-	#build_buildroot
-	build_debian
-}
-
-=======
->>>>>>> asus/rk3399pro_linux_release_v1.0.0_20190528_20190531
 function build_yocto(){
 	if [ -z "$RK_YOCTO_MACHINE" ]; then
 		echo "This board doesn't support yocto!"
@@ -178,7 +165,6 @@ function build_debian(){
 	echo "TARGET_ARCH=$RK_ARCH"
 	echo "RK_DISTRO_DEFCONFIG=$RK_DISTRO_DEFCONFIG"
 	echo "========================================"
-<<<<<<< HEAD
 	#/usr/bin/time -f "you take %E to build debian" $TOP_DIR/distro/make.sh $RK_DISTRO_DEFCONFIG
 	cd $TOP_DIR/debian && VERSION_NUMBER=$VERSION_NUMBER VERSION=$VERSION ARCH=$RK_ARCH ./mk-rootfs-stretch-arm64.sh && ./mk-image.sh && cd -
 	if [ $? -eq 0 ]; then
@@ -187,14 +173,6 @@ function build_debian(){
                 echo "====Build debian failed!===="
                 exit 1
         fi
-=======
-	/usr/bin/time -f "you take %E to build debian" $TOP_DIR/distro/make.sh $RK_DISTRO_DEFCONFIG
-	if [ $? -eq 0 ]; then
-		echo "====Build debian ok!===="
-	else
-		echo "====Build debian failed!===="
-		exit 1
-	fi
 }
 
 function build_rootfs(){
@@ -205,14 +183,14 @@ function build_rootfs(){
 			build_yocto
 			ROOTFS_IMG=yocto/build/tmp/deploy/images/$RK_YOCTO_MACHINE/rootfs.img
 			;;
-		debian)
-			build_debian
-			ROOTFS_IMG=rootfs/linaro-rootfs.img
-			;;
-		*)
+		buildroot)
 			build_buildroot
 			ROOTFS_IMG=buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.$RK_ROOTFS_TYPE
 			;;
+                *)
+                        build_debian
+                        ROOTFS_IMG=debian/linaro-rootfs.img
+                        ;;
 	esac
 
 	[ -z "$ROOTFS_IMG" ] && return
@@ -223,7 +201,6 @@ function build_rootfs(){
 		mkdir -p ${RK_ROOTFS_IMG%/*}
 		ln -rsf $TOP_DIR/$ROOTFS_IMG $RK_ROOTFS_IMG
 	fi
->>>>>>> asus/rk3399pro_linux_release_v1.0.0_20190528_20190531
 }
 
 function build_debian_base(){
@@ -240,7 +217,7 @@ function build_debian_base(){
         fi
 }
 
-function update_debian_packages(){
+function build_debian_packages(){
         cd $TOP_DIR/debian && VERSION=$VERSION ./update-local-packages-tinker_edge_r.sh && cd -
         if [ $? -eq 0 ]; then
                 echo "Succeeded to update local Debian packages."
@@ -290,7 +267,7 @@ function build_all(){
 	echo "============================================"
 	build_uboot
 	build_kernel
-	build_rootfs ${RK_ROOTFS_SYSTEM:-buildroot}
+	build_rootfs ${RK_ROOTFS_SYSTEM:-debian}
 	build_recovery
 	build_ramboot
 }
@@ -396,84 +373,10 @@ function build_allsave(){
 #=========================
 # build targets
 #=========================
-<<<<<<< HEAD
-if [ $BUILD_TARGET == uboot ];then
-    build_uboot
-    exit 0
-elif [ $BUILD_TARGET == kernel ];then
-    build_kernel
-    exit 0
-elif [ $BUILD_TARGET == modules ];then
-    build_modules
-    exit 0
-elif [ $BUILD_TARGET == rootfs ];then
-    build_rootfs
-    exit 0
-elif [ $BUILD_TARGET == buildroot ];then
-    build_buildroot
-    exit 0
-elif [ $BUILD_TARGET == recovery ];then
-    build_kernel
-    build_recovery
-    exit 0
-elif [ $BUILD_TARGET == ramboot ];then
-    build_ramboot
-    exit 0
-elif [ $BUILD_TARGET == multi-npu_boot ];then
-    build_multi-npu_boot
-    exit 0
-elif [ $BUILD_TARGET == pcba ];then
-    build_pcba
-    exit 0
-elif [ $BUILD_TARGET == yocto ];then
-    build_yocto
-    exit 0
-elif [ $BUILD_TARGET == debian_base ];then
-    build_debian_base
-    exit 0
-elif [ $BUILD_TARGET == debian_packages ];then
-    update_debian_packages
-    exit 0
-elif [ $BUILD_TARGET == debian ];then
-    build_debian
-    exit 0
-elif [ $BUILD_TARGET == updateimg ];then
-    build_updateimg
-    exit 0
-elif [ $BUILD_TARGET == otapackage ];then
-    build_ota_ab_updateimg
-    exit 0
-elif [ $BUILD_TARGET == all ];then
-    build_all
-    exit 0
-elif [ $BUILD_TARGET == firmware ];then
-    build_firmware
-    exit 0
-elif [ $BUILD_TARGET == save ];then
-    build_save
-    exit 0
-elif [ $BUILD_TARGET == cleanall ];then
-    clean_all
-    exit 0
-elif [ $BUILD_TARGET == --help ] || [ $BUILD_TARGET == help ] || [ $BUILD_TARGET == -h ];then
-    usage
-    exit 0
-elif [ $BUILD_TARGET == allsave ];then
-    build_all_save
-    exit 0
-elif [ -f $NEW_BOARD_CONFIG ];then
-    rm -f $BOARD_CONFIG
-    ln -s $NEW_BOARD_CONFIG $BOARD_CONFIG
-else
-    echo "Can't found build config, please check again"
-    usage
-    exit 1
-=======
 
 if echo $@|grep -wqE "help|-h"; then
 	usage
 	exit 0
->>>>>>> asus/rk3399pro_linux_release_v1.0.0_20190528_20190531
 fi
 
 OPTIONS="$@"
