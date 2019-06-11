@@ -32,9 +32,14 @@ function usage()
 	echo "ramboot            -build ramboot image"
 	echo "multi-npu_boot     -build boot image for multi-npu board"
 	echo "yocto              -build yocto rootfs"
+<<<<<<< HEAD
 	echo "debian_base        -build base debian system"
 	echo "debian_packages    -update local Debian packages"
 	echo "debian             -build debian rootfs"
+=======
+	echo "debian             -build debian9 stretch rootfs"
+	echo "distro             -build debian10 buster rootfs"
+>>>>>>> asus/rk3399pro_linux_release_v1.0.0_20190606
 	echo "pcba               -build pcba"
 	echo "recovery           -build recovery"
 	echo "all                -build uboot, kernel, rootfs, and recovery images"
@@ -161,6 +166,38 @@ function build_yocto(){
 }
 
 function build_debian(){
+	cd debian
+
+	if [ "$RK_ARCH" == "arm" ]; then
+		ARCH=armhf
+	fi
+	if [ "$RK_ARCH" == "arm64" ]; then
+		ARCH=arm64
+	fi
+
+	if [ ! -e linaro-stretch-alip-*.tar.gz ]; then
+		echo "\033[36m Run mk-base-debian.sh first \033[0m"
+		RELEASE=stretch TARGET=desktop ARCH=$ARCH ./mk-base-debian.sh
+	fi
+
+	if [ "$ARCH" = "armhf" ]; then
+		VERSION=debug ARCH=$ARCH ./mk-rootfs-stretch.sh
+
+	else
+		VERSION=debug ARCH=$ARCH ./mk-rootfs-stretch-arm64.sh
+	fi
+
+	./mk-image.sh
+	cd ..
+	if [ $? -eq 0 ]; then
+		echo "====Build Debian9 ok!===="
+	else
+		echo "====Build Debian9 failed!===="
+		exit 1
+	fi
+}
+
+function build_distro(){
 	echo "===========Start build debian==========="
 	echo "TARGET_ARCH=$RK_ARCH"
 	echo "RK_DISTRO_DEFCONFIG=$RK_DISTRO_DEFCONFIG"
@@ -183,7 +220,19 @@ function build_rootfs(){
 			build_yocto
 			ROOTFS_IMG=yocto/build/tmp/deploy/images/$RK_YOCTO_MACHINE/rootfs.img
 			;;
+<<<<<<< HEAD
 		buildroot)
+=======
+		debian)
+			build_debian
+			ROOTFS_IMG=debian/linaro-rootfs.img
+			;;
+		distro)
+			build_distro
+			ROOTFS_IMG=rootfs/linaro-rootfs.img
+			;;
+		*)
+>>>>>>> asus/rk3399pro_linux_release_v1.0.0_20190606
 			build_buildroot
 			ROOTFS_IMG=buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.$RK_ROOTFS_TYPE
 			;;
@@ -393,7 +442,7 @@ for option in ${OPTIONS:-allsave}; do
 
 			ln -sf $CONF $BOARD_CONFIG
 			;;
-		buildroot|debian|yocto)
+		buildroot|debian|distro|yocto)
 			build_rootfs $option
 			;;
 		recovery)
