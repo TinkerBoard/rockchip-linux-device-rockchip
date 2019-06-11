@@ -27,23 +27,19 @@ function usage()
 	echo "uboot              -build uboot"
 	echo "kernel             -build kernel"
 	echo "modules            -build kernel modules"
-	echo "rootfs             -build default rootfs, currently build debian as default"
+	echo "rootfs             -build default rootfs, currently build debian9 as default"
 	echo "buildroot          -build buildroot rootfs"
 	echo "ramboot            -build ramboot image"
 	echo "multi-npu_boot     -build boot image for multi-npu board"
 	echo "yocto              -build yocto rootfs"
-<<<<<<< HEAD
 	echo "debian_base        -build base debian system"
 	echo "debian_packages    -update local Debian packages"
-	echo "debian             -build debian rootfs"
-=======
 	echo "debian             -build debian9 stretch rootfs"
 	echo "distro             -build debian10 buster rootfs"
->>>>>>> asus/rk3399pro_linux_release_v1.0.0_20190606
 	echo "pcba               -build pcba"
 	echo "recovery           -build recovery"
-	echo "all                -build uboot, kernel, rootfs, and recovery images"
-	echo "cleanall           -clean uboot, kernel, rootfs, and recovery images"
+	echo "all                -build uboot, kernel, rootfs, recovery image"
+	echo "cleanall           -clean uboot, kernel, rootfs, recovery"
 	echo "firmware           -pack all the image we need to boot up system"
 	echo "updateimg          -pack update image"
 	echo "otapackage         -pack ab update otapackage image"
@@ -181,10 +177,10 @@ function build_debian(){
 	fi
 
 	if [ "$ARCH" = "armhf" ]; then
-		VERSION=debug ARCH=$ARCH ./mk-rootfs-stretch.sh
+		VERSION_NUMBER=$VERSION_NUMBER VERSION=$VERSION ARCH=$ARCH ./mk-rootfs-stretch.sh
 
 	else
-		VERSION=debug ARCH=$ARCH ./mk-rootfs-stretch-arm64.sh
+		VERSION_NUMBER=$VERSION_NUMBER VERSION=$VERSION ARCH=$ARCH ./mk-rootfs-stretch-arm64.sh
 	fi
 
 	./mk-image.sh
@@ -202,14 +198,13 @@ function build_distro(){
 	echo "TARGET_ARCH=$RK_ARCH"
 	echo "RK_DISTRO_DEFCONFIG=$RK_DISTRO_DEFCONFIG"
 	echo "========================================"
-	#/usr/bin/time -f "you take %E to build debian" $TOP_DIR/distro/make.sh $RK_DISTRO_DEFCONFIG
-	cd $TOP_DIR/debian && VERSION_NUMBER=$VERSION_NUMBER VERSION=$VERSION ARCH=$RK_ARCH ./mk-rootfs-stretch-arm64.sh && ./mk-image.sh && cd -
+	/usr/bin/time -f "you take %E to build debian" $TOP_DIR/distro/make.sh $RK_DISTRO_DEFCONFIG
 	if [ $? -eq 0 ]; then
-                echo "====Build debian ok!===="
-        else
-                echo "====Build debian failed!===="
-                exit 1
-        fi
+		echo "====Build debian ok!===="
+	else
+		echo "====Build debian failed!===="
+		exit 1
+	fi
 }
 
 function build_rootfs(){
@@ -220,19 +215,11 @@ function build_rootfs(){
 			build_yocto
 			ROOTFS_IMG=yocto/build/tmp/deploy/images/$RK_YOCTO_MACHINE/rootfs.img
 			;;
-<<<<<<< HEAD
-		buildroot)
-=======
-		debian)
-			build_debian
-			ROOTFS_IMG=debian/linaro-rootfs.img
-			;;
 		distro)
 			build_distro
 			ROOTFS_IMG=rootfs/linaro-rootfs.img
 			;;
-		*)
->>>>>>> asus/rk3399pro_linux_release_v1.0.0_20190606
+                buildroot)
 			build_buildroot
 			ROOTFS_IMG=buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.$RK_ROOTFS_TYPE
 			;;
@@ -257,7 +244,15 @@ function build_debian_base(){
         echo "===========Start build debian base==========="
         echo "TARGET_ARCH=$RK_ARCH"
         echo "========================================"
-        cd $TOP_DIR/debian && RELEASE=stretch TARGET=desktop ARCH=$RK_ARCH ./mk-base-debian.sh && cd -
+
+	if [ "$RK_ARCH" == "arm" ]; then
+                ARCH=armhf
+        fi
+        if [ "$RK_ARCH" == "arm64" ]; then
+                ARCH=arm64
+        fi
+
+	cd $TOP_DIR/debian && RELEASE=stretch TARGET=desktop ARCH=$ARCH ./mk-base-debian.sh && cd -
         if [ $? -eq 0 ]; then
                 echo "====Build debian base ok!===="
         else
