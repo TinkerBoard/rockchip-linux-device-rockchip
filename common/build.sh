@@ -12,6 +12,11 @@ else
 fi
 echo "VERSION_NUMBER: $VERSION_NUMBER"
 
+if [ ! $PACKAGE ]; then
+	PACKAGE="local"
+fi
+echo "PACKAGE: $PACKAGE"
+
 CMD=`realpath $0`
 COMMON_DIR=`dirname $CMD`
 TOP_DIR=$(realpath $COMMON_DIR/../../..)
@@ -33,7 +38,7 @@ function usage()
 	echo "multi-npu_boot     -build boot image for multi-npu board"
 	echo "yocto              -build yocto rootfs"
 	echo "debian_base        -build base debian system"
-	echo "debian_packages    -update local Debian packages"
+	echo "local_packages     -update local packages"
 	echo "debian             -build debian9 stretch rootfs"
 	echo "distro             -build debian10 buster rootfs"
 	echo "pcba               -build pcba"
@@ -261,12 +266,12 @@ function build_debian_base(){
         fi
 }
 
-function build_debian_packages(){
-        cd $TOP_DIR/debian && VERSION=$VERSION ./update-local-packages-tinker_edge_r.sh && cd -
+function build_local_packages(){
+        cd $TOP_DIR/debian && PACKAGE=$PACKAGE VERSION=$VERSION ./update-local-packages-tinker_edge_r.sh && cd -
         if [ $? -eq 0 ]; then
-                echo "Succeeded to update local Debian packages."
+                echo "Succeeded to update local packages: $PACKAGE"
         else
-                echo "Failed to update local Debian packages."
+                echo "Failed to update local packages: $PACKAGE"
                 exit 1
         fi
 }
