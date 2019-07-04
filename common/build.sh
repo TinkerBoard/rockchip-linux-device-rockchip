@@ -85,6 +85,19 @@ function build_kernel(){
 	fi
 }
 
+function build_kernel_all(){
+	# build kernel for SD bootup card
+	sed -i 's/PARTUUID=614e0000-0000/\/dev\/mmcblk0p8/g' kernel/arch/arm64/boot/dts/rockchip/rk3399-linux.dtsi
+	build_kernel
+	mv kernel/boot.img rockdev/boot_sd.img
+	cd $TOP_DIR/kernel && make clean && cd -
+
+	# build kernel for eMMC
+	sed -i 's/\/dev\/mmcblk0p8/PARTUUID=614e0000-0000/g' kernel/arch/arm64/boot/dts/rockchip/rk3399-linux.dtsi
+	build_kernel
+}
+
+
 function build_modules(){
 	echo "============Start build kernel modules============"
 	echo "TARGET_ARCH          =$RK_ARCH"
@@ -315,7 +328,7 @@ function build_all(){
 	echo "TARGET_RAMBOOT_CONFIG=$RK_CFG_RAMBOOT"
 	echo "============================================"
 	build_uboot
-	build_kernel
+	build_kernel_all
 	build_rootfs ${RK_ROOTFS_SYSTEM:-debian}
 	build_recovery
 	build_ramboot
