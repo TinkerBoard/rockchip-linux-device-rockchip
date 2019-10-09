@@ -1,0 +1,29 @@
+
+##### Hardware Interface Config #####
+
+## Note: uart4 and spi1 are the same pins. Set the latter one while both on. ##
+
+#intf:i2c6=off
+## todo ##
+
+#intf:i2c7=off
+## todo ##
+
+#intf:uart0=off
+## config on will override fiq_debugger ##
+
+#intf:uart4=off
+#intf:i2s0=off
+#intf:spi1=off
+#intf:spi5=off
+#intf:pwm0=off
+#intf:pwm1=off
+#intf:pwm3a=off
+
+##### Driver Config #####
+
+conf:eth_wakeup=on
+
+##### List of device tree overlays to load. Format: overlay=<dtbo name, no extension> <dtbo2> ... #####
+
+overlay=
