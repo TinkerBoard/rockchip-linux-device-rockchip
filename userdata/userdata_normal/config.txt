@@ -22,4 +22,6 @@ conf:eth_wakeup=on
 
 ##### List of device tree overlays to load. Format: overlay=<dtbo name, no extension> <dtbo2> ... #####
 
+## Note: Put dtbo files under the overlays folder. ##
+
 overlay=
