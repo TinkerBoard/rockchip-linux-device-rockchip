@@ -4,15 +4,11 @@
 ## Note: uart4 and spi1 are the same pins. Set the latter one while both on. ##
 ## Note: fiq_debugger and uart0 use the same pin. Set fiq_debugger first while both on. ##
 
-#intf:i2c6=off
-## todo ##
-
-#intf:i2c7=off
-## todo ##
-
 intf:fiq_debugger=on
 #intf:uart0=off
 #intf:uart4=off
+#intf:i2c6=off
+#intf:i2c7=off
 #intf:i2s0=off
 #intf:spi1=off
 #intf:spi5=off
