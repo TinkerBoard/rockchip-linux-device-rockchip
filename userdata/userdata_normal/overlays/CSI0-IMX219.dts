@@ -1,0 +1,62 @@
+/dts-v1/;
+/plugin/;
+/ {
+	compatible = "rockchip,rk3399pro-evb-v11-linux";
+
+	fragment@0 {
+		target = <&i2c1>;
+		__overlay__ {
+			status = "okay";
+
+			ov5647: ov5647@36 {
+				status = "disabled";
+				port {
+					ucam_out0: endpoint {
+						remote-endpoint=<0>;
+					};
+				};
+			};
+
+			imx219a: imx219a@10 {
+				compatible = "sony,imx219";
+				status = "okay";
+				reg = <0x10>;
+				clocks = <&cru 137>;
+				clock-names = "xvclk";
+
+				/* conflict with csi-ctl-gpios */
+				power-gpios = <&gpio0 8 0>;
+				enable-gpios = <&gpio2 3 0>;
+				rockchip,camera-module-index = <0>;
+				rockchip,camera-module-facing = "back";
+				rockchip,camera-module-name = "RPi_v21";
+				rockchip,camera-module-lens-name = "default";
+
+				port {
+					ucam_out_imx219: endpoint {
+						remote-endpoint = <&mipi_in_ucam0>;
+						data-lanes = <1 2>;
+					};
+				};
+			};
+		};
+	};
+
+	fragment@1 {
+		target = <&mipi_dphy_rx0>;
+		__overlay__ {
+			status = "okay";
+
+			ports {
+				port@0 {
+					reg = <0>;
+					mipi_in_ucam0: endpoint@1 {
+						reg = <1>;
+						remote-endpoint = <&ucam_out_imx219>;
+						data-lanes = <1 2>;
+					};
+				};
+			};
+		};
+	};
+};
