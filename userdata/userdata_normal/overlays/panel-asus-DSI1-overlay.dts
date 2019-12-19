@@ -1,0 +1,67 @@
+/dts-v1/;
+/plugin/;
+/ {
+	compatible = "rockchip,rk3399pro-evb-v11-linux";
+
+	fragment@0 {
+		target = <&dsi1>;
+		__overlay__ {
+			status = "okay";
+			mipi_panel1: mipi-panel {
+				compatible ="asus-dsi-panel";
+				reg = <0>;
+				status = "okay";
+			};
+		};
+	};
+
+	fragment@1 {
+		target = <&dsi1_in_vopl>;
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	fragment@2 {
+		target = <&cdn_dp>;
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	fragment@3 {
+		target = <&hdmi>;
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	fragment@4 {
+		target = <&i2c2>;
+		__overlay__ {
+			status = "okay";
+
+			tinker_mcu1: tinker_mcu@45 {
+				compatible = "tinker_mcu";
+				reg = <0x45>;
+			};
+
+			tinker_mcu2: tinker_mcu2@36 {
+				status = "okay";
+				compatible = "tinker_mcu_ili9881c";
+				reg = <0x36>;
+			};
+			imx219: imx219@10 {
+				status = "disabled";
+			};
+
+		};
+	};
+
+	fragment@5 {
+		target = <&mipi_dphy_tx1rx1>;
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+};
