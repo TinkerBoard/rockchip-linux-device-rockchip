@@ -10,6 +10,7 @@ intf:fiq_debugger=on
 #intf:i2c6=off
 #intf:i2c7=off
 #intf:i2s0=off
+#intf:spdif=off
 #intf:spi1=off
 #intf:spi5=off
 #intf:pwm0=off
