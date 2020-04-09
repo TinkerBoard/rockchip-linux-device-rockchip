@@ -1,6 +1,7 @@
 #!/bin/bash
 
 export RK_RKNN_API_PLT=Linux
+export RK_RKNN_API_ARCH=arm
 export RK_NPU_TRANSFER_PROXY_ARCH=linux-aarch64
 
 set -e
@@ -19,7 +20,7 @@ then
     if [ -d "$NPU_TRANSFER_DIR" ]
     then
         if [ -f "$MKTOOLSFILE" ]; then
-            $MKTOOLSFILE $RK_RKNN_API_PLT $RK_NPU_TRANSFER_PROXY_ARCH
+            $MKTOOLSFILE $RK_RKNN_API_PLT $RK_RKNN_API_ARCH $RK_NPU_TRANSFER_PROXY_ARCH
         fi
     else
         echo "warning: $NPU_TRANSFER_DIR not found!"

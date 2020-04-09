@@ -1,5 +1,6 @@
 #!/bin/bash
 
+<<<<<<< HEAD
 if [ ! $VERSION ]; then
     VERSION="debug"
 fi
@@ -16,6 +17,9 @@ if [ ! $PACKAGE ]; then
 	PACKAGE="local"
 fi
 echo "PACKAGE: $PACKAGE"
+=======
+unset RK_CFG_TOOLCHAIN
+>>>>>>> asus/rk3399pro_linux_release_v1.3.0_20200324
 
 CMD=`realpath $0`
 COMMON_DIR=`dirname $CMD`
@@ -31,9 +35,15 @@ function usage()
 	echo "Available options:"
 	echo "BoardConfig*.mk    -switch to specified board config"
 	echo "uboot              -build uboot"
+	echo "spl                -build spl"
 	echo "kernel             -build kernel"
 	echo "modules            -build kernel modules"
+<<<<<<< HEAD
 	echo "rootfs             -build default rootfs, currently build debian9 as default"
+=======
+	echo "toolchain          -build toolchain"
+	echo "rootfs             -build default rootfs, currently build buildroot as default"
+>>>>>>> asus/rk3399pro_linux_release_v1.3.0_20200324
 	echo "buildroot          -build buildroot rootfs"
 	echo "ramboot            -build ramboot image"
 	echo "multi-npu_boot     -build boot image for multi-npu board"
@@ -67,6 +77,22 @@ function build_uboot(){
 		echo "====Build uboot ok!===="
 	else
 		echo "====Build uboot failed!===="
+		exit 1
+	fi
+}
+
+function build_spl(){
+	echo "============Start build spl============"
+	echo "TARGET_SPL_CONFIG=$RK_SPL_DEFCONFIG"
+	echo "========================================="
+	if [ -f u-boot/*spl.bin ]; then
+		rm u-boot/*spl.bin
+	fi
+	cd u-boot && ./make.sh $RK_SPL_DEFCONFIG && ./make.sh spl-s && cd -
+	if [ $? -eq 0 ]; then
+		echo "====Build spl ok!===="
+	else
+		echo "====Build spl failed!===="
 		exit 1
 	fi
 }
@@ -110,6 +136,21 @@ function build_modules(){
 		echo "====Build kernel ok!===="
 	else
 		echo "====Build kernel failed!===="
+		exit 1
+	fi
+}
+
+function build_toolchain(){
+	echo "==========Start build toolchain =========="
+	echo "TARGET_TOOLCHAIN_CONFIG=$RK_CFG_TOOLCHAIN"
+	echo "========================================="
+	[[ $RK_CFG_TOOLCHAIN ]] \
+		&& /usr/bin/time -f "you take %E to build toolchain" $COMMON_DIR/mk-toolchain.sh $BOARD_CONFIG \
+		|| echo "No toolchain step, skip!"
+	if [ $? -eq 0 ]; then
+		echo "====Build toolchain ok!===="
+	else
+		echo "====Build toolchain failed!===="
 		exit 1
 	fi
 }
@@ -170,8 +211,8 @@ function build_yocto(){
 	cd yocto
 	ln -sf $RK_YOCTO_MACHINE.conf build/conf/local.conf
 	source oe-init-build-env
-	bitbake core-image-minimal
 	cd ..
+	bitbake core-image-minimal -r conf/include/rksdk.conf
 
 	if [ $? -eq 0 ]; then
 		echo "====Build yocto ok!===="
@@ -196,12 +237,16 @@ function build_debian(){
 		RELEASE=stretch TARGET=desktop ARCH=$ARCH ./mk-base-debian.sh
 	fi
 
+<<<<<<< HEAD
 	if [ "$ARCH" = "armhf" ]; then
 		VERSION_NUMBER=$VERSION_NUMBER VERSION=$VERSION ARCH=$ARCH ./mk-rootfs-stretch.sh
 
 	else
 		VERSION_NUMBER=$VERSION_NUMBER VERSION=$VERSION ARCH=$ARCH ./mk-rootfs-stretch-arm64.sh
 	fi
+=======
+	VERSION=debug ARCH=$ARCH ./mk-rootfs-stretch.sh
+>>>>>>> asus/rk3399pro_linux_release_v1.3.0_20200324
 
 	./mk-image.sh
 	cd ..
@@ -218,7 +263,7 @@ function build_distro(){
 	echo "TARGET_ARCH=$RK_ARCH"
 	echo "RK_DISTRO_DEFCONFIG=$RK_DISTRO_DEFCONFIG"
 	echo "========================================"
-	/usr/bin/time -f "you take %E to build debian" $TOP_DIR/distro/make.sh $RK_DISTRO_DEFCONFIG
+	cd distro && make $RK_DISTRO_DEFCONFIG && /usr/bin/time -f "you take %E to build debian" $TOP_DIR/distro/make.sh && cd -
 	if [ $? -eq 0 ]; then
 		echo "====Build debian ok!===="
 	else
@@ -237,7 +282,7 @@ function build_rootfs(){
 			;;
 		distro)
 			build_distro
-			ROOTFS_IMG=rootfs/linaro-rootfs.img
+			ROOTFS_IMG=yocto/output/images/rootfs.$RK_ROOTFS_TYPE
 			;;
                 buildroot)
 			build_buildroot
@@ -322,16 +367,33 @@ function build_all(){
 	echo "TARGET_ARCH=$RK_ARCH"
 	echo "TARGET_PLATFORM=$RK_TARGET_PRODUCT"
 	echo "TARGET_UBOOT_CONFIG=$RK_UBOOT_DEFCONFIG"
+	echo "TARGET_SPL_CONFIG=$RK_SPL_DEFCONFIG"
 	echo "TARGET_KERNEL_CONFIG=$RK_KERNEL_DEFCONFIG"
 	echo "TARGET_KERNEL_DTS=$RK_KERNEL_DTS"
+	echo "TARGET_TOOLCHAIN_CONFIG=$RK_CFG_TOOLCHAIN"
 	echo "TARGET_BUILDROOT_CONFIG=$RK_CFG_BUILDROOT"
 	echo "TARGET_RECOVERY_CONFIG=$RK_CFG_RECOVERY"
 	echo "TARGET_PCBA_CONFIG=$RK_CFG_PCBA"
 	echo "TARGET_RAMBOOT_CONFIG=$RK_CFG_RAMBOOT"
 	echo "============================================"
+<<<<<<< HEAD
 	build_uboot
 	build_kernel_all
 	build_rootfs ${RK_ROOTFS_SYSTEM:-debian}
+=======
+
+	#note: if build spl, it will delete loader.bin in uboot directory,
+	# so can not build uboot and spl at the same time.
+	if [ -z $RK_SPL_DEFCONFIG ]; then
+		build_uboot
+	else
+		build_spl
+	fi
+
+	build_kernel
+	build_toolchain && \
+	build_rootfs ${RK_ROOTFS_SYSTEM:-buildroot}
+>>>>>>> asus/rk3399pro_linux_release_v1.3.0_20200324
 	build_recovery
 	build_ramboot
 }
@@ -451,7 +513,10 @@ for option in ${OPTIONS:-allsave}; do
 	echo "processing option: $option"
 	case $option in
 		BoardConfig*.mk)
-			CONF=$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$option
+			option=$TOP_DIR/device/rockchip/$RK_TARGET_PRODUCT/$option
+			;&
+		*.mk)
+			CONF=$(realpath $option)
 			echo "switching to board: $CONF"
 			if [ ! -f $CONF ]; then
 				echo "not exist!"

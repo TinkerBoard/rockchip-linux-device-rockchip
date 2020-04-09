@@ -1,0 +1,405 @@
+{
+	"APP" : {
+    "Title" : "网络摄像机"
+  },
+  "NAV": {
+    "Brand": "网络摄像机",
+    "Preview": "预览",
+    "Config": "配置",
+    "About": "关于",
+    "Login": "登录",
+    "Logout": "注销"
+  },
+  "PTZ": {
+    "Name": "云台",
+    "Preset": "预置位",
+    "Cruise": "巡航路径"
+  },
+  "CFG": {
+    "System": {
+      "name": "系统",
+      "items": {
+        "Settings" : "系统设置",
+        "Maintain" : "系统维护",
+        "Security" : "安全管理",
+        "User" : "用户管理"
+      }
+    },
+    "Network": {
+      "name" : "网络",
+      "items": {
+        "Basic" : "基础设置",
+        "Advanced" : "高级设置"
+      }
+    },
+    "Video": {
+      "name" : "视频",
+      "items": {
+        "Encoder" : "编码参数",
+        "ROI" : "兴趣区域",
+        "RegionCrop" : "区域裁剪"
+      }
+    },
+    "Audio": {
+      "name" : "音频",
+      "items": {
+        "AudioParam" : "音频参数"
+      }
+    },
+    "Image": {
+      "name" : "图像",
+      "items": {
+        "DisplaySettings" : "显示设置",
+        "OSDSettings" : "OSD 设置",
+        "PrivacyCover" : "隐私遮盖",
+        "ScenarioSwitch" : "场景切换"
+      }
+    },
+    "Event": {
+      "name" : "事件",
+      "items": {
+        "MotionDetect" : "移动侦测",
+        "AlarmInput" : "报警输入",
+        "AlarmOutput" : "报警输出",
+        "Abnormal" : "异常"
+      }
+    },
+    "Storage": {
+      "name" : "存储",
+      "items": {
+        "PlanSettings" : "计划配置",
+        "StorageManage" : "存储管理"
+      }
+    },
+    "Intel": {
+      "name" : "智能分析",
+      "items": {
+        "MarkCover" : "叠加和抓图",
+        "MaskArea" : "屏蔽区域",
+        "RuleSettings" : "规则配置",
+        "Advanced" : "高级配置"
+      }
+    }
+  },
+  "ABOUTContent" : "用于网络摄像机的通用网页前端方案，采用 Angular 8、Bootstrap 4、video.js、videojs-flash等库和框架，使用TypeScript、SCSS等语言，使用WASM、WebGL、FFMPEG等技术支持H265播放",
+  "NICTYPE": "网卡类型",
+  "10MHD": "10M 半双工",
+  "10MD": "10M 双工",
+  "100MHD": "100M 半双工",
+  "100MD": "100M 双工",
+  "1000MD": "1000M 双工",
+
+  "DHCP": "自动获取",
+  "IPV4IP": "设备IPv4地址",
+  "IPV4MASK": "IPv4子网掩码",
+  "IPV4GW": "IPv4默认网关",
+  "enable": "启用",
+  "MAC": "物理地址",
+  "DNS1":"首选DNS服务器",
+  "DNS2":"备用DNS服务器",
+
+  "PREVIOUS": "上一页",
+  "NEXT": "下一页",
+
+  "WIFI": {
+    "ID": "序号",
+    "MODE": "工作模式",
+    "SECURITY": "安全模式",
+    "CHANNEL": "工作信道",
+    "SIGNAL": "信号强度",
+    "SPEED": "速度",
+    "STATUS": "状态",
+    "SECURETYPE": "加密类型",
+    "PASSPHRASE": "密码",
+    "ENABLEWPS": "启用WPS",
+    "PINCODE": "PIN码",
+    "ROUTERPIN": "路由器PIN码",
+    "USEROUTERPIN": "使用路由器PIN码",
+    "PBCCONNECT": "PBC连接",
+    "CONNECT": "连接",
+    "TABLE": "Wi-Fi 列表",
+    "CONFIG": "Wi-Fi 配置",
+    "NAME": "Wi-Fi 名称",
+    "Strength": "Wi-Fi 强度",
+    "State": "Wi-Fi 状态",
+    "FAVORITE": "Wi-Fi 优先级",
+    "TYPE": "类型",
+    "SETTING": "Wi-Fi 设置",
+    "PASSWORD": "Wi-Fi 密码",
+    "GENERATE": "生成",
+    "WPSMODE": "WPS 模式设置",
+    "AUTOCONNECT": "Wi-Fi 自动连接"
+  },
+
+  "DEV_MANAGE": "设备管理",
+  "port": "端口",
+
+  "add": "绘制区域",
+  "del": "清除",
+  "save": "保存",
+
+  "streamType": "码流类型",
+  "mainStream": "主码流",
+  "subStream": "子码流",
+  "thirdStream": "第三码流",
+
+  "persistentArea": "固定区域",
+  "areaID": "区域编号",
+  "areaLevel": "区域等级",
+  "areaName": "区域名称",
+
+  "videoType": "视频类型",
+  "videoStream": "视频流",
+  "compositeStream": "复合流",
+
+  "resolution": "分辨率",
+
+  "RCMode": "码率类型",
+  "CBR": "定码率",
+  "VBR": "变码率",
+
+  "imageQuality": "图像质量",
+  "lowest": "最低",
+  "lower": "较低",
+  "medium": "中等",
+  "higher": "较高",
+  "highest": "最高",
+
+  "frameRate": "视频帧率",
+  "maxRate": "码率上限",
+
+  "outputDataType": "视频编码",
+  "smart": "Smart",
+  "IFrameInterval": "I帧间隔",
+  "audioCodec": "音频编码",
+  "audioInput": "音频输入",
+  "sampleRate": "采样率",
+  "audioBitrate": "音频码率",
+  "micIn": "Mic In",
+  "lineIn": "Line In",
+  "inputVolume": "输入音量",
+  "noiseFiltering": "环境噪声过滤",
+
+  "open": "开启",
+  "close": "关闭",
+
+  "RCQuality": "编码复杂度",
+  "high": "高",
+  "low": "低",
+
+  "rateSmooth": "码流平滑",
+  "smooth": "清晰<->平滑",
+
+  "scenario": "场景",
+  "normal": "普通",
+  "frontlight": "顺光",
+  "lowIllumination": "低照度",
+  "custom1": "自定义1",
+  "custom2": "自定义2",
+
+  "dayNightConversion": "日夜参数转换",
+  "graphicOptions": "图像调节",
+  "lightness": "亮度",
+  "contrast": "对比度",
+  "saturation": "饱和度",
+  "sharpness": "锐度",
+
+  "exposure": "曝光",
+  "apertureType": "光圈类型",
+  "auto": "自动",
+  "manual": "手动",
+  "automaticApertureSensitivity": "自动光圈灵敏度",
+  "exposureTime": "曝光时间",
+  "gain": "增益",
+
+  "ICR": "日夜转换",
+  "day": "白天",
+  "night": "夜晚",
+  "timing": "定时",
+  "alarmInputTrigger": "报警输入触发",
+
+  "sensitivity": "灵敏度",
+  "TTF": "过滤时间",
+  "overexposeSuppress": "防补光过曝",
+  "overexposeSuppressType": "防补光过曝模式",
+  "distanceLevel": "距离等级",
+
+  "backlight": "背光",
+  "backlightCompensationArea": "背光补偿区域",
+  "up": "上",
+  "down": "下",
+  "left": "左",
+  "right": "右",
+  "center": "中心",
+  "customize": "自定义",
+
+  "WDR": "宽动态",
+  "WDRLevel": "宽动态级别",
+  "HLC": "强光抑制",
+  "HLCLevel": "强光抑制级别",
+
+  "whiteBalance": "白平衡",
+  "manualWhiteBalance": "手动白平衡",
+  "autoWhiteBalance1": "自动白平衡1",
+  "autoWhiteBalance2": "自动白平衡2",
+  "lockingWhiteBalance": "锁定白平衡",
+  "fluorescentLamp": "日光灯",
+  "incandescent": "白炽灯",
+  "warmLight": "暖光灯",
+  "naturalLight": "自然光",
+  "whiteBalanceRed": "白平衡R增益",
+  "whiteBalanceBlue": "白平衡B增益",
+
+  "imageEnhancement": "图像增强",
+
+  "DNR": "数字降噪",
+  "general": "普通模式",
+  "advanced": "专家模式",
+
+  "noiseLevel": "降噪等级",
+  "spatialDenoiseLevel": "时域降噪等级",
+  "temporalDenoiseLevel": "空域降噪等级",
+  "dehaze": "透雾模式",
+  "antiShakeDSP": "电子防抖",
+  "grayRange": "灰度范围",
+
+  "videoAdjustment": "视频调整",
+  "mirror": "镜像",
+  "leftRight": "左右",
+  "upDown": "上下",
+  "rotate": "旋转",
+
+  "SCN": "场景模式",
+  "indoor": "室内",
+  "outdoor": "室外",
+
+  "videoStandard": "视频制式",
+  "videoInputMode": "视频输入模式",
+
+  "other": "其他",
+  "localOutput": "本地输出",
+
+  "deviceName": "设备名称",
+  "telecontrolID": "设备编号",
+  "model": "设备型号",
+  "serialNumber": "设备序列号",
+  "firmwareVersion": "主控版本",
+  "encoderVersion": "编码版本",
+  "webVersion": "Web版本",
+  "pluginVersion": "Plugin版本",
+  "channelsNumber": "通道个数",
+  "hardDisksNumber": "硬盘个数",
+  "alarmInputsNumber": "报警输入个数",
+  "alarmOutputsNumber": "报警输出个数",
+  "firmwareVersionInfo": "主控版本属性",
+
+  "attribute": "属性",
+  "transparent/flashing": "透明，闪烁",
+  "opaque/flashing": "不透明，闪烁",
+  "transparent/not-flashing": "透明，不闪烁",
+  "opaque/not-flashing": "不透明，不闪烁",
+  "font": "字体",
+  "adaptive": "自适应",
+  "color": "颜色",
+  "aligment": "对齐方式",
+  "alignRight": "右对齐",
+  "alignLeft": "左对齐",
+  "GB": "国际模式",
+  "boundary": "最小边距",
+  "no characters": "无",
+  "one character": "一个字符",
+  "two characters": "两个字符",
+  "channelNameOverlayEnabled": "显示通道名称",
+  "dateTimeOverlayEnabled": "显示日期",
+  "displayWeek": "显示星期",
+  "channelName": "通道名称",
+  "dateStyle": "日期格式",
+  "YYYY-MM-DD": "YYYY-MM-DD(年-月-日)",
+  "MM-DD-YYYY": "MM-DD-YYYY(月-日-年)",
+  "DD-MM-YYYY": "DD-MM-YYYY(日-月-年)",
+  "CHR-YYYY-MM-DD": "YYYY年MM月DD日",
+  "CHR-MM-DD-YYYY": "MM月DD日YYYY年",
+  "CHR-DD-MM-YYYY": "DD日MM月YYYY年",
+  "CHR-YYYY/MM/DD": "YYYY/MM/DD(年/月/日)",
+  "CHR-MM/DD/YYYY": "MM/DD/YYYY(月/日/年)",
+  "CHR-DD/MM/YYYY": "DD/MM/YYYY(日/月/年)",
+  "timeStyle": "时间格式",
+  "12hour": "12 小时",
+  "24hour": "24 小时",
+  "characterOverlay": "字符叠加",
+
+  "maskEnabled": "启用视频遮盖",
+  "drawMask": "绘制区域",
+  "stopDrawing": "停止绘制",
+  "deleteMask": "清楚全部",
+  "confirmDelete": "清楚确认",
+  "isDeleteAllMask": "确定要清楚全部遮盖区域吗?",
+  "yes": "确定",
+  "no": "取消",
+
+  "updatePicture": "上传图片",
+  "updateFile": "上传",
+  "overlaySetting": "图片叠加",
+  "imageOverlayEnabled": "开启图片叠加",
+  "xPosition": "X坐标",
+  "yPosition": "Y坐标",
+  "pictureWidth": "图片宽度",
+  "pictureHeight": "图片高度",
+
+  "UPGRADE": {
+    "restart": "重启",
+    "restartDevice": "重启设备.",
+    "restoreDefault": "恢复出厂设置",
+    "restoreSimple": "简单恢复",
+    "setPartParameterDefault": "简单恢复出厂设置。",
+    "restoreAll": "彻底恢复",
+    "setAllParameterDefault": "彻底恢复出厂设置。",
+    "outputInfo": "导出信息",
+    "deviceInfo": "设备信息",
+    "diagnosticInfo": "诊断信息",
+    "diagnosticInfoIntroduce": "包含日志和系统信息等。",
+    "inputInfo": "导入信息",
+    "input": "导入",
+    "status": "状态",
+    "upgrade": "升级",
+    "upgradeFile": "升级文件",
+    "tip": "说明：升级需要几分钟，请耐心等待！"
+},
+
+  "VideoPlan": "录像计划",
+  "Screenshot": "抓图",
+  "HardDiskManagement": "硬盘管理",
+  "NAS": "网络硬盘",
+  "CloudStorage": "云存储",
+
+  "SD Card": "SD卡",
+  "U Disk": "U盘",
+  "rw": "可读写",
+  "ro": "只读",
+  "wo": "只写",
+  "unmounted": "未挂载",
+  "mounted": "已挂载",
+
+  "hardDisk": {
+    "format": "格式化",
+    "management": "硬盘管理",
+    "quota": "磁盘配额",
+    "current": "当前存储磁盘号",
+    "diskNumber": "磁盘号",
+    "name": "磁盘名",
+    "capacity": "容量",
+    "remainingSpace": "剩余空间",
+    "status": "状态",
+    "type": "类型",
+    "attributes": "属性",
+    "formatProgress": "格式化进度"
+  },
+  "quota": {
+    "pictureCapacity": "图片容量",
+    "pictureRemainingSpace": "图片剩余空间",
+    "videoCapacity": "录像容量",
+    "videoRemainingSpace": "录像剩余空间",
+    "snapshotQuotaPercentage": "抓图配额百分比",
+    "videoQuotaPercentage": "录像配额百分比"
+  }
+}

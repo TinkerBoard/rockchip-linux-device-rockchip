@@ -7,13 +7,13 @@ export RK_UBOOT_DEFCONFIG=rk3399
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
 # Kernel dts
-export RK_KERNEL_DTS=rk3399-sapphire-excavator-linux
+export RK_KERNEL_DTS=rk3399-evb-ind-lpddr4-linux
 # boot image type
 export RK_BOOT_IMG=boot.img
 # kernel image path
 export RK_KERNEL_IMG=kernel/arch/arm64/boot/Image
 # parameter for GPT table
-export RK_PARAMETER=parameter-buildroot.txt
+export RK_PARAMETER=parameter.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_rk3399
 # Recovery config
@@ -36,8 +36,6 @@ export RK_ROOTFS_IMG=rockdev/rootfs.${RK_ROOTFS_TYPE}
 export RK_OEM_FS_TYPE=ext2
 # Set userdata partition type, including ext2, fat
 export RK_USERDATA_FS_TYPE=ext2
-# Set flash type. support <emmc, nand, spi_nand, spi_nor>
-export RK_STORAGE_TYPE=emmc
 #OEM config
 export RK_OEM_DIR=oem_normal
 #userdata config
