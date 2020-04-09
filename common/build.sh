@@ -1,6 +1,5 @@
 #!/bin/bash
 
-<<<<<<< HEAD
 if [ ! $VERSION ]; then
     VERSION="debug"
 fi
@@ -17,9 +16,8 @@ if [ ! $PACKAGE ]; then
 	PACKAGE="local"
 fi
 echo "PACKAGE: $PACKAGE"
-=======
+
 unset RK_CFG_TOOLCHAIN
->>>>>>> asus/rk3399pro_linux_release_v1.3.0_20200324
 
 CMD=`realpath $0`
 COMMON_DIR=`dirname $CMD`
@@ -38,12 +36,8 @@ function usage()
 	echo "spl                -build spl"
 	echo "kernel             -build kernel"
 	echo "modules            -build kernel modules"
-<<<<<<< HEAD
-	echo "rootfs             -build default rootfs, currently build debian9 as default"
-=======
 	echo "toolchain          -build toolchain"
-	echo "rootfs             -build default rootfs, currently build buildroot as default"
->>>>>>> asus/rk3399pro_linux_release_v1.3.0_20200324
+	echo "rootfs             -build default rootfs, currently build debian9 as default"
 	echo "buildroot          -build buildroot rootfs"
 	echo "ramboot            -build ramboot image"
 	echo "multi-npu_boot     -build boot image for multi-npu board"
@@ -237,16 +231,7 @@ function build_debian(){
 		RELEASE=stretch TARGET=desktop ARCH=$ARCH ./mk-base-debian.sh
 	fi
 
-<<<<<<< HEAD
-	if [ "$ARCH" = "armhf" ]; then
-		VERSION_NUMBER=$VERSION_NUMBER VERSION=$VERSION ARCH=$ARCH ./mk-rootfs-stretch.sh
-
-	else
-		VERSION_NUMBER=$VERSION_NUMBER VERSION=$VERSION ARCH=$ARCH ./mk-rootfs-stretch-arm64.sh
-	fi
-=======
-	VERSION=debug ARCH=$ARCH ./mk-rootfs-stretch.sh
->>>>>>> asus/rk3399pro_linux_release_v1.3.0_20200324
+	VERSION_NUMBER=$VERSION_NUMBER VERSION=$VERSION ARCH=$ARCH ./mk-rootfs-stretch.sh
 
 	./mk-image.sh
 	cd ..
@@ -376,11 +361,6 @@ function build_all(){
 	echo "TARGET_PCBA_CONFIG=$RK_CFG_PCBA"
 	echo "TARGET_RAMBOOT_CONFIG=$RK_CFG_RAMBOOT"
 	echo "============================================"
-<<<<<<< HEAD
-	build_uboot
-	build_kernel_all
-	build_rootfs ${RK_ROOTFS_SYSTEM:-debian}
-=======
 
 	#note: if build spl, it will delete loader.bin in uboot directory,
 	# so can not build uboot and spl at the same time.
@@ -390,10 +370,9 @@ function build_all(){
 		build_spl
 	fi
 
-	build_kernel
+	build_kernel_all
 	build_toolchain && \
-	build_rootfs ${RK_ROOTFS_SYSTEM:-buildroot}
->>>>>>> asus/rk3399pro_linux_release_v1.3.0_20200324
+	build_rootfs ${RK_ROOTFS_SYSTEM:-debian}
 	build_recovery
 	build_ramboot
 }
