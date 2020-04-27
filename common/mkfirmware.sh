@@ -20,7 +20,9 @@ MISC_IMG=$TOP_DIR/device/rockchip/rockimg/$RK_MISC
 ROOTFS_IMG=$TOP_DIR/$RK_ROOTFS_IMG
 RAMBOOT_IMG=$TOP_DIR/buildroot/output/$RK_CFG_RAMBOOT/images/ramboot.img
 RECOVERY_IMG=$TOP_DIR/buildroot/output/$RK_CFG_RECOVERY/images/recovery.img
-FAKEROOT_TOOL=$TOP_DIR/buildroot/output/$RK_CFG_BUILDROOT/host/bin/fakeroot
+# Use fakeroot built from recovey since we do not build buildroot.
+#FAKEROOT_TOOL=$TOP_DIR/buildroot/output/$RK_CFG_BUILDROOT/host/bin/fakeroot
+FAKEROOT_TOOL=$TOP_DIR/buildroot/output/$RK_CFG_RECOVERY/host/bin/fakeroot
 OEM_FAKEROOT_SCRIPT=$ROCKDEV/oem.fs
 USERDATA_FAKEROOT_SCRIPT=$ROCKDEV/userdata.fs
 TRUST_IMG=$TOP_DIR/u-boot/trust.img
