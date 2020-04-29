@@ -312,13 +312,20 @@ function build_debian_base(){
 }
 
 function build_local_packages(){
-        cd $TOP_DIR/debian && PACKAGE=$PACKAGE VERSION=$VERSION ./update-local-packages-tinker_edge_r.sh && cd -
-        if [ $? -eq 0 ]; then
-                echo "Succeeded to update local packages: $PACKAGE"
-        else
-                echo "Failed to update local packages: $PACKAGE"
-                exit 1
-        fi
+	if [ "$RK_ARCH" == "arm" ]; then
+		ARCH=armhf
+	fi
+
+	if [ "$RK_ARCH" == "arm64" ]; then
+		ARCH=arm64
+	fi
+	cd $TOP_DIR/debian && PACKAGE=$PACKAGE VERSION=$VERSION ARCH=$ARCH ./update-local-packages-tinker_edge_r.sh && cd -
+	if [ $? -eq 0 ]; then
+		echo "Succeeded to update local packages: $PACKAGE"
+	else
+		echo "Failed to update local packages: $PACKAGE"
+		exit 1
+	fi
 }
 
 function build_recovery(){
