@@ -37,7 +37,9 @@ mkdir -p $ROCKDEV
 # Require buildroot host tools to do image packing.
 if [ ! -d "$TARGET_OUTPUT_DIR" ]; then
     echo "Source buildroot/build/envsetup.sh"
-    source $TOP_DIR/buildroot/build/envsetup.sh $RK_CFG_BUILDROOT
+    # Use recovey host tools since we do not build buildroot.
+    #source $TOP_DIR/buildroot/build/envsetup.sh $RK_CFG_BUILDROOT
+    source $TOP_DIR/buildroot/build/envsetup.sh $RK_CFG_RECOVERY
 fi
 
 check_partition_size() {
