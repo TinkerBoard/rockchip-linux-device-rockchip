@@ -22,7 +22,6 @@ unset RK_CFG_TOOLCHAIN
 CMD=`realpath $0`
 COMMON_DIR=`dirname $CMD`
 TOP_DIR=$(realpath $COMMON_DIR/../../..)
-ROCKDEV=$TOP_DIR/rockdev
 BOARD_CONFIG=$TOP_DIR/device/rockchip/.BoardConfig.mk
 source $BOARD_CONFIG
 source $TOP_DIR/device/rockchip/common/Version.mk
@@ -97,7 +96,6 @@ function build_kernel(){
 	echo "TARGET_KERNEL_CONFIG =$RK_KERNEL_DEFCONFIG"
 	echo "TARGET_KERNEL_DTS    =$RK_KERNEL_DTS"
 	echo "=========================================="
-	mkdir -p $ROCKDEV
 
 	# build kernel for boot-up from SD card
         sed -i 's/PARTUUID=614e0000-0000/\/dev\/mmcblk0p8/g' kernel/arch/arm64/boot/dts/rockchip/rk3399-linux.dtsi
