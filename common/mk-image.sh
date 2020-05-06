@@ -55,7 +55,7 @@ copy_to_image()
     mkdir -p $TEMP || return -1
     sudo mount $TARGET $TEMP || return -1
 
-    sudo cp -rp $SRC_DIR/* $TEMP
+    cp -rp $SRC_DIR/* $TEMP
     RET=$?
 
     sudo umount $TEMP
