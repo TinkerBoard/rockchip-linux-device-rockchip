@@ -28,6 +28,7 @@ USERDATA_FAKEROOT_SCRIPT=$ROCKDEV/userdata.fs
 TRUST_IMG=$TOP_DIR/u-boot/trust.img
 UBOOT_IMG=$TOP_DIR/u-boot/uboot.img
 BOOT_IMG=$TOP_DIR/kernel/$RK_BOOT_IMG
+BOOT_SD_IMG=$TOP_DIR/kernel/boot_sd.img
 LOADER=$TOP_DIR/u-boot/*_loader_v*.bin
 SPL=$TOP_DIR/u-boot/*_loader_spl.bin
 #SPINOR_LOADER=$TOP_DIR/u-boot/*_loader_spinor_v*.bin
@@ -225,6 +226,15 @@ fi
 
 if [ $RK_BOOT_IMG ]
 then
+        if [ -f $BOOT_SD_IMG ]
+        then
+                echo -n "create boot_sd.img..."
+                ln -rsf $BOOT_SD_IMG $ROCKDEV/boot_sd.img
+                echo "done."
+        else
+                echo "warning: $BOOT_SD_IMG not found!"
+        fi
+
 	if [ -f $BOOT_IMG ]
 	then
 		echo -n "create boot.img..."
