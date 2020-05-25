@@ -96,14 +96,6 @@ function build_kernel(){
 	echo "TARGET_KERNEL_CONFIG =$RK_KERNEL_DEFCONFIG"
 	echo "TARGET_KERNEL_DTS    =$RK_KERNEL_DTS"
 	echo "=========================================="
-
-	# build kernel for boot-up from SD card
-        sed -i 's/PARTUUID=614e0000-0000/\/dev\/mmcblk0p8/g' kernel/arch/arm64/boot/dts/rockchip/rk3399-linux.dtsi
-	cd $TOP_DIR/kernel && make ARCH=$RK_ARCH $RK_KERNEL_DEFCONFIG && make ARCH=$RK_ARCH $RK_KERNEL_DTS.img -j$RK_JOBS && cd -
-	mv kernel/boot.img kernel/boot_sd.img
-
-	# build kernel for boot-up from eMMC
-        sed -i 's/\/dev\/mmcblk0p8/PARTUUID=614e0000-0000/g' kernel/arch/arm64/boot/dts/rockchip/rk3399-linux.dtsi
 	cd $TOP_DIR/kernel && make ARCH=$RK_ARCH $RK_KERNEL_DEFCONFIG && make ARCH=$RK_ARCH $RK_KERNEL_DTS.img -j$RK_JOBS && cd -
 	if [ $? -eq 0 ]; then
 		echo "====Build kernel ok!===="
