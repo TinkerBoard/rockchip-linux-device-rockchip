@@ -6,11 +6,17 @@ fi
 echo "VERSION: $VERSION"
 
 if [ ! $VERSION_NUMBER ]; then
-	VERSION_NUMBER="eng_by"_"$USER"_"$(date  +%Y%m%d%H%M_%Z)"
+	VERSION_NUMBER="eng"-"$USER"-"$(date  +%Y%m%d)"
+	RELEASE_NAME=Tinker_Edge_R-Debian-Stretch-"$VERSION_NUMBER"
 else
-	VERSION_NUMBER="$VERSION_NUMBER"_"$(date  +%Y%m%d%H%M_%Z)"
+	VERSION_NUMBER="$VERSION_NUMBER"-"$(date  +%Y%m%d)"
+	RELEASE_NAME=Tinker_Edge_R-Debian-Stretch-V"$VERSION_NUMBER"
 fi
 echo "VERSION_NUMBER: $VERSION_NUMBER"
+
+if [ "$VERSION" == "debug" ]; then
+	RELEASE_NAME="$RELEASE_NAME"-Debug
+fi
 
 unset RK_CFG_TOOLCHAIN
 
@@ -416,8 +422,8 @@ function build_otapackage(){
 function build_save(){
 	IMAGE_PATH=$TOP_DIR/rockdev
 	#DATE=$(date  +%Y%m%d.%H%M)
-	STUB_PATH=Image/"$RK_KERNEL_DTS"_DEBIAN_"$VERSION_NUMBER"_"$VERSION"
-	STUB_PATH="$(echo $STUB_PATH | tr '[:lower:]' '[:upper:]')"
+	STUB_PATH=IMAGE/"$RELEASE_NAME"
+	#STUB_PATH="$(echo $STUB_PATH | tr '[:lower:]' '[:upper:]')"
 	export STUB_PATH=$TOP_DIR/$STUB_PATH
 	export STUB_PATCH_PATH=$STUB_PATH/PATCHES
 	mkdir -p $STUB_PATH
@@ -426,12 +432,24 @@ function build_save(){
 	$TOP_DIR/.repo/repo/repo forall -c "$TOP_DIR/device/rockchip/common/gen_patches_body.sh"
 
 	#Copy stubs
-	$TOP_DIR/.repo/repo/repo manifest -r -o $STUB_PATH/manifest_$(echo "$RK_KERNEL_DTS"_DEBIAN_"$VERSION_NUMBER"_"$VERSION" | tr '[:lower:]' '[:upper:]').xml
+	#$TOP_DIR/.repo/repo/repo manifest -r -o $STUB_PATH/manifest_$(echo "$RK_KERNEL_DTS"_DEBIAN_"$VERSION_NUMBER"_"$VERSION" | tr '[:lower:]' '[:upper:]').xml
+	$TOP_DIR/.repo/repo/repo manifest -r -o $STUB_PATH/manifest_$RELEASE_NAME.xml
 	mkdir -p $STUB_PATCH_PATH/kernel
 	cp $TOP_DIR/kernel/.config $STUB_PATCH_PATH/kernel
 	cp $TOP_DIR/kernel/vmlinux $STUB_PATCH_PATH/kernel
 	mkdir -p $STUB_PATH/IMAGES/
 	cp $IMAGE_PATH/* $STUB_PATH/IMAGES/
+
+	if [ "$VERSION" == "release" ]; then
+		mkdir mkdir -p $STUB_PATH/$RELEASE_NAME
+		mv $STUB_PATH/IMAGES/update.img $STUB_PATH/$RELEASE_NAME/.
+		cp -rp $TOP_DIR/device/rockchip/tinker_edge_r/flash/. $STUB_PATH/$RELEASE_NAME
+		cd $STUB_PATH
+		zip -r $RELEASE_NAME.zip $RELEASE_NAME
+		sha256sum $RELEASE_NAME.zip > $RELEASE_NAME.zip.sha256sum
+		cd -
+		rm -rf $STUB_PATH/$RELEASE_NAME
+	fi
 
 	#Save build command info
 	echo "UBOOT:  defconfig: $RK_UBOOT_DEFCONFIG" >> $STUB_PATH/build_cmd_info
