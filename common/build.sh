@@ -27,7 +27,7 @@ function usagerootfs()
 {
 	echo "source envsetup.sh $RK_CFG_BUILDROOT"
 
-	case "${RK_ROOTFS_SYSTEM:-buildroot}" in
+	case "${RK_ROOTFS_SYSTEM:-debian}" in
 		yocto)
 			;;
 		debian)
@@ -69,11 +69,12 @@ function usage()
 	echo "kernel             -build kernel"
 	echo "modules            -build kernel modules"
 	echo "toolchain          -build toolchain"
-	echo "rootfs             -build default rootfs, currently build buildroot as default"
+	echo "rootfs             -build default rootfs, currently build debian9 as default"
 	echo "buildroot          -build buildroot rootfs"
 	echo "ramboot            -build ramboot image"
 	echo "multi-npu_boot     -build boot image for multi-npu board"
 	echo "yocto              -build yocto rootfs"
+	echo "debian_base        -build base debian system"
 	echo "debian             -build debian9 stretch rootfs"
 	echo "distro             -build debian10 buster rootfs"
 	echo "pcba               -build pcba"
@@ -241,6 +242,27 @@ function build_yocto(){
 	fi
 }
 
+function build_debian_base(){
+        cd debian
+
+        if [ "$RK_ARCH" == "arm" ]; then
+                ARCH=armhf
+        fi
+        if [ "$RK_ARCH" == "arm64" ]; then
+                ARCH=arm64
+        fi
+
+        RELEASE=stretch TARGET=desktop ARCH=$ARCH ./mk-base-debian.sh
+
+        cd ..
+        if [ $? -eq 0 ]; then
+                echo "====Build Debian9 base ok!===="
+        else
+                echo "====Build Debian9 base failed!===="
+                exit 1
+        fi
+}
+
 function build_debian(){
 	cd debian
 
@@ -290,17 +312,17 @@ function build_rootfs(){
 			build_yocto
 			ROOTFS_IMG=yocto/build/tmp/deploy/images/$RK_YOCTO_MACHINE/rootfs.img
 			;;
-		debian)
-			build_debian
-			ROOTFS_IMG=debian/linaro-rootfs.img
+		buildroot)
+			build_buildroot
+                        ROOTFS_IMG=buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.$RK_ROOTFS_TYPE
 			;;
 		distro)
 			build_distro
 			ROOTFS_IMG=distro/output/images/rootfs.$RK_ROOTFS_TYPE
 			;;
 		*)
-			build_buildroot
-			ROOTFS_IMG=buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.$RK_ROOTFS_TYPE
+			build_debian
+                        ROOTFS_IMG=debian/linaro-rootfs.img
 			;;
 	esac
 
@@ -365,7 +387,7 @@ function build_all(){
 
 	build_kernel
 	build_toolchain && \
-	build_rootfs ${RK_ROOTFS_SYSTEM:-buildroot}
+	build_rootfs ${RK_ROOTFS_SYSTEM:-debian}
 	build_recovery
 	build_ramboot
 }
