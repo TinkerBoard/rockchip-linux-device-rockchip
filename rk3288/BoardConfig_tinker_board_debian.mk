@@ -7,13 +7,13 @@ export RK_UBOOT_DEFCONFIG=rk3288
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
 # Kernel dts
-export RK_KERNEL_DTS=rk3288-evb-rk808-linux
+export RK_KERNEL_DTS=rk3288-tinker-board
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
 export RK_KERNEL_IMG=kernel/arch/arm/boot/zImage
 # parameter for GPT table
-export RK_PARAMETER=parameter.txt
+export RK_PARAMETER=parameter_debian.txt
 # Buildroot config
 export RK_CFG_BUILDROOT=rockchip_rk3288
 # Debian 10 config
@@ -41,6 +41,6 @@ export RK_OEM_DIR=oem_normal
 #userdata config
 export RK_USERDATA_DIR=userdata_normal
 #misc image
-export RK_MISC=wipe_all-misc.img
+export RK_MISC=blank-misc.img
 #choose enable distro module
 export RK_DISTRO_MODULE=
