@@ -1,0 +1,69 @@
+/dts-v1/;
+/plugin/;
+/ {
+	compatible = "rockchip,rk3288-evb-rk808-linux", "rockchip,rk3288";
+
+	fragment@0 {
+		target = <&i2c2>;
+		__overlay__ {
+			status = "okay";
+
+			imx219: imx219@10 {
+				status = "disabled";
+				port {
+					imx219_out: endpoint {
+						remote-endpoint=<0>;
+					};
+				};
+			};
+
+			ov5647: ov5647@36 {
+				compatible = "ovti,ov5647";
+				status = "okay";
+				reg = <0x36>;
+				clocks = <&cru 127>;
+				clock-names = "xvclk";
+
+				pinctrl-names = "rockchip,camera_default";
+				pinctrl-0 = <&isp_mipi>;
+
+				enable-gpios = <&gpio2 0 0>;
+
+				rockchip,camera-module-index = <0>;
+				rockchip,camera-module-facing = "back";
+				rockchip,camera-module-name = "RPi_v13";
+				rockchip,camera-module-lens-name = "default";
+
+				port {
+					ov5647_out: endpoint {
+						remote-endpoint = <&mipi_in_cam>;
+						data-lanes = <1 2>;
+					};
+				};
+			};
+		};
+	};
+
+	fragment@1 {
+		target = <&mipi_phy_rx0>;
+		__overlay__ {
+			status = "okay";
+
+			ports {
+				#address-cells = <1>;
+				#size-cells = <0>;
+
+				port@0 {
+					reg = <0>;
+					#address-cells = <1>;
+					#size-cells = <0>;
+
+					mipi_in_cam: endpoint {
+						remote-endpoint = <&ov5647_out>;
+						data-lanes = <1 2>;
+					};
+				};
+			};
+		};
+	};
+};
