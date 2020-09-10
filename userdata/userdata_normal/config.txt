@@ -1,0 +1,22 @@
+##### Hardware Interface Config #####
+
+## Note: fiq_debugger and uart1 use the same pin. Set fiq_debugger first while both on. ##
+
+intf:fiq_debugger=on
+#intf:i2c1=off
+#intf:i2c4=off
+#intf:spi0=off
+#intf:spi2=off
+#intf:pwm2=off
+#intf:pwm3=off
+#intf:pcm_i2s=off
+#intf:uart1=off
+#intf:uart2=off
+#intf:uart3=off
+#intf:uart4=off
+
+##### List of device tree overlays to load. Format: overlay=<dtbo name, no extension> <dtbo2> ... #####
+
+## Note: Put dtbo files under the overlays folder. ##
+
+overlay=
