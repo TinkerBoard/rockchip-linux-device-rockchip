@@ -177,6 +177,12 @@ if [ $RK_USERDATA_DIR ]
 then
 	if [ -d $USER_DATA_DIR ]
 	then
+		for file in $USER_DATA_DIR/overlays/*.dts
+		do
+			dts=${file##*/}
+			dtbo=${dts%.*}
+			dtc -@ -O dtb -o $USER_DATA_DIR/overlays/$dtbo.dtbo $USER_DATA_DIR/overlays/$dts
+		done
 		echo "#!/bin/sh" > $USERDATA_FAKEROOT_SCRIPT
 		echo "set -e" >> $USERDATA_FAKEROOT_SCRIPT
 		echo "$MKIMAGE $USER_DATA_DIR $ROCKDEV/userdata.img $RK_USERDATA_FS_TYPE"  >> $USERDATA_FAKEROOT_SCRIPT
