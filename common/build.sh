@@ -6,6 +6,7 @@ unset RK_CFG_TOOLCHAIN
 CMD=`realpath $0`
 COMMON_DIR=`dirname $CMD`
 TOP_DIR=$(realpath $COMMON_DIR/../../..)
+LIB_MODULES_DIR=$TOP_DIR/debian/lib_modules
 BOARD_CONFIG=$TOP_DIR/device/rockchip/.BoardConfig.mk
 source $BOARD_CONFIG
 source $TOP_DIR/device/rockchip/common/Version.mk
@@ -147,7 +148,15 @@ function build_modules(){
 	echo "TARGET_KERNEL_CONFIG =$RK_KERNEL_DEFCONFIG"
 	echo "TARGET_KERNEL_CONFIG_FRAGMENT =$RK_KERNEL_DEFCONFIG_FRAGMENT"
 	echo "=================================================="
-	cd $TOP_DIR/kernel && make ARCH=$RK_ARCH $RK_KERNEL_DEFCONFIG $RK_KERNEL_DEFCONFIG_FRAGMENT && make ARCH=$RK_ARCH modules -j$RK_JOBS && cd -
+
+	if [ -e $LIB_MODULES_DIR ]; then
+		rm -rf $LIB_MODULES_DIR
+	fi
+
+	mkdir -p $LIB_MODULES_DIR
+
+	cd $TOP_DIR/kernel && make ARCH=$RK_ARCH $RK_KERNEL_DEFCONFIG $RK_KERNEL_DEFCONFIG_FRAGMENT && make ARCH=$RK_ARCH modules -j$RK_JOBS && make ARCH=$RK_ARCH modules_install INSTALL_MOD_PATH=$LIB_MODULES_DIR && cd -
+
 	if [ $? -eq 0 ]; then
 		echo "====Build kernel ok!===="
 	else
@@ -386,6 +395,7 @@ function build_all(){
 	fi
 
 	build_kernel
+	build_modules
 	build_toolchain && \
 	build_rootfs ${RK_ROOTFS_SYSTEM:-debian}
 	build_recovery
@@ -396,6 +406,7 @@ function build_cleanall(){
 	echo "clean uboot, kernel, rootfs, recovery"
 	cd $TOP_DIR/u-boot/ && make distclean && cd -
 	cd $TOP_DIR/kernel && make distclean && cd -
+	rm -rf $LIB_MODULES_DIR
 	rm -rf $TOP_DIR/buildroot/output
 	rm -rf $TOP_DIR/yocto/build/tmp
 	rm -rf $TOP_DIR/distro/output
