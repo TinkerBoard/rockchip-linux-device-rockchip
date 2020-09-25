@@ -1,0 +1,3 @@
+##### Note: Each line must be less than 160 words #####
+
+console=tty0 earlyprintk
