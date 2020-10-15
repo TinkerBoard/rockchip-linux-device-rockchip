@@ -1,0 +1,18 @@
+// Definitions for ds1307
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "rockchip,rk3288-evb-rk808-linux", "rockchip,rk3288";
+
+	fragment@0 {
+		target = <&i2c1>;
+		__overlay__ {
+			rtc: ds1307@68 {
+				compatible = "dallas,ds1307";
+                                reg = <0x68>;
+				status = "okay";
+			};
+		};
+	};
+};
