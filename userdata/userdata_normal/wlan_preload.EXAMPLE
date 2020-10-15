@@ -1,0 +1,22 @@
+##############################################################
+# Tinker-net-mods service allow user preload network
+# configuration without monitor.
+#
+# 1. Create a folder named system-connections.
+#
+# 2. Modify this example keyfile to match your wireless
+#    environment or copy any existent keyfiles. Then put them
+#    into system-connections directory.
+#
+# 3. Network manager will load keyfile after boot up.
+#
+##############################################################
+[connection]
+id=ASUS_Preload_Keyfile
+
+[wifi]
+ssid=MyAccessPoint
+
+[wifi-security]
+key-mgmt=wpa-psk
+psk=MyPassPhrase
