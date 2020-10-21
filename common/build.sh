@@ -1,5 +1,32 @@
 #!/bin/bash
 
+if [ ! $VERSION ]; then
+	VERSION="debug"
+fi
+echo "VERSION: $VERSION"
+
+if [ ! $VERSION_NUMBER ]; then
+	VERSION_NUMBER="eng"-"$USER"-"$(date +%Y%m%d)"
+	RELEASE_NAME="Tinker_Board-Debian-Stretch-"
+	#FULL_IMAGE_NAME=Tinker_Board-Debian-Stretch-"$VERSION_NUMBER"
+	#UBOOT_IMAGE_NAME=Tinker_Board-Debian-Stretch-Bootloader-"$VERSION_NUMBER"
+else
+	VERSION_NUMBER="$VERSION_NUMBER"-"$(date +%Y%m%d)"
+	RELEASE_NAME="Tinker_Board-Debian-Stretch-v"
+	#FULL_IMAGE_NAME=Tinker_Board-Debian-Stretch-V"$VERSION_NUMBER"
+        #UBOOT_IMAGE_NAME=Tinker_Board-Debian-Stretch-Bootloader-V"$VERSION_NUMBER"
+fi
+
+if [ "$VERSION" == "debug" ]; then
+	VERSION_NUMBER="$VERSION_NUMBER"-Debug
+	#FULL_IMAGE_NAME="$FULL_IMAGE_NAME"-Debug
+        #UBOOT_IMAGE_NAME="$UBOOT_IMAGE_NAME"-Debug
+fi
+echo "VERSION_NUMBER: $VERSION_NUMBER"
+
+RELEASE_NAME="$RELEASE_NAME""$VERSION_NUMBER"
+echo "RELEASE_NAME: $RELEASE_NAME"
+
 export LC_ALL=C
 unset RK_CFG_TOOLCHAIN
 
@@ -287,7 +314,7 @@ function build_debian(){
 		RELEASE=stretch TARGET=desktop ARCH=$ARCH ./mk-base-debian.sh
 	fi
 
-	VERSION=debug ARCH=$ARCH ./mk-rootfs-stretch.sh
+	VERSION_NUMBER=$VERSION_NUMBER VERSION=$VERSION ARCH=$ARCH ./mk-rootfs-stretch.sh
 
 	./mk-image.sh
 	cd ..
@@ -472,9 +499,9 @@ function build_otapackage(){
 
 function build_save(){
 	IMAGE_PATH=$TOP_DIR/rockdev
-	DATE=$(date  +%Y%m%d.%H%M)
-	STUB_PATH=Image/"$RK_KERNEL_DTS"_"$DATE"_RELEASE_TEST
-	STUB_PATH="$(echo $STUB_PATH | tr '[:lower:]' '[:upper:]')"
+	#DATE=$(date  +%Y%m%d.%H%M)
+	STUB_PATH=IMAGE/"$RELEASE_NAME"
+	#STUB_PATH="$(echo $STUB_PATH | tr '[:lower:]' '[:upper:]')"
 	export STUB_PATH=$TOP_DIR/$STUB_PATH
 	export STUB_PATCH_PATH=$STUB_PATH/PATCHES
 	mkdir -p $STUB_PATH
@@ -483,12 +510,24 @@ function build_save(){
 	$TOP_DIR/.repo/repo/repo forall -c "$TOP_DIR/device/rockchip/common/gen_patches_body.sh"
 
 	#Copy stubs
-	$TOP_DIR/.repo/repo/repo manifest -r -o $STUB_PATH/manifest_${DATE}.xml
+	#$TOP_DIR/.repo/repo/repo manifest -r -o $STUB_PATH/manifest_${DATE}.xml
+	$TOP_DIR/.repo/repo/repo manifest -r -o $STUB_PATH/manifest_$RELEASE_NAME.xml
 	mkdir -p $STUB_PATCH_PATH/kernel
 	cp $TOP_DIR/kernel/.config $STUB_PATCH_PATH/kernel
 	cp $TOP_DIR/kernel/vmlinux $STUB_PATCH_PATH/kernel
 	mkdir -p $STUB_PATH/IMAGES/
 	cp $IMAGE_PATH/* $STUB_PATH/IMAGES/
+
+	if [ "$VERSION" == "release" ]; then
+		mkdir mkdir -p $STUB_PATH/$RELEASE_NAME
+		mv $STUB_PATH/IMAGES/update.img $STUB_PATH/$RELEASE_NAME/.
+		#cp -rp $TOP_DIR/device/rockchip/tinker_edge_r/flash/. $STUB_PATH/$RELEASE_NAME
+		cd $STUB_PATH
+		zip -r $RELEASE_NAME.zip $RELEASE_NAME
+		sha256sum $RELEASE_NAME.zip > $RELEASE_NAME.zip.sha256sum
+		cd -
+		rm -rf $STUB_PATH/$RELEASE_NAME
+	fi
 
 	#Save build command info
 	echo "UBOOT:  defconfig: $RK_UBOOT_DEFCONFIG" >> $STUB_PATH/build_cmd_info
@@ -546,3 +585,7 @@ for option in ${OPTIONS:-allsave}; do
 			;;
 	esac
 done
+#								mv sdcard_full.img $FULL_IMAGE_NAME.img
+#									mv sdcard_uboot.img $UBOOT_IMAGE_NAME.img
+#										zip $FULL_IMAGE_NAME.zip $FULL_IMAGE_NAME.img
+#											zip $UBOOT_IMAGE_NAME.zip $UBOOT_IMAGE_NAME.img
