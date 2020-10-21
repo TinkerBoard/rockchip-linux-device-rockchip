@@ -1,6 +1,8 @@
 ##### Hardware Interface Config #####
 
-## Note: fiq_debugger and uart1 use the same pin. Set fiq_debugger first while both on. ##
+## Note: fiq_debugger and uart3 use the same pin. Set fiq_debugger first while both on. ##
+## Note: uart4 and spi0 are the same pins. Set the latter one while both on. ##
+## Note: uart2 is the same pins to pwm2 and pwm3. Set the latter one while both on. ##
 
 intf:fiq_debugger=on
 #intf:i2c1=off
