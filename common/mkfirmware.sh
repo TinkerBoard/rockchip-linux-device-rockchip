@@ -177,6 +177,8 @@ if [ $RK_USERDATA_DIR ]
 then
 	if [ -d $USER_DATA_DIR ]
 	then
+		rm -f $USER_DATA_DIR/overlays/*.dtbo
+
 		for file in $USER_DATA_DIR/overlays/*.dts
 		do
 			dts=${file##*/}
