@@ -1,0 +1,88 @@
+/dts-v1/;
+/plugin/;
+/ {
+	compatible = "rockchip,rk3288-evb-rk808-linux", "rockchip,rk3288";
+
+	fragment@0 {
+		target = <&pwm3>;
+		__overlay__ {
+			status = "okay";
+		};
+	};
+	fragment@1 {
+		target = <&backlight>;
+		__overlay__ {
+			status = "okay";
+			pwms = <&pwm3 0 4000000 0>;
+                        minimal-brightness-level = <26>;
+		};
+	};
+	fragment@2 {
+		target = <&i2c3>;
+		__overlay__ {
+			status = "okay";
+			dsi_lvds_bridge: sn65dsi84@2c {
+				status = "okay";
+				lvds-clk-rate = <75000000>;
+				lvds-format = <2>;
+				lvds-bpp = <24>;
+				lvds-width-mm = <409>;
+				lvds-height-mm = <230>;
+				sync_delay = <33>;
+
+				t1=<0>;
+				t2=<1>;
+				t3=<500>;
+				t4=<200>;
+				t5=<1>;
+				t6=<0>;
+				t7=<1000>;
+
+				bpc=<8>;
+				bus-format = <0x100a>;
+				dsi,flags = <0x3>;
+				dsi,format = <0>;
+				dsi-lanes = <2>;
+
+				display-timings {
+					lvds {
+						clock-frequency = <75000000>;
+						hactive = <1366>;
+						vactive = <768>;
+						hfront-porch = <70>;
+						hback-porch = <80>;
+						hsync-len = <34>;
+						vfront-porch = <15>;
+						vsync-len = <8>;
+						vback-porch = <15>;
+						hsync-active = <0>;
+						vsync-active = <0>;
+						de-active = <1>;
+						pixelclk-active = <0>;
+					};
+				};
+			};
+		};
+	};
+	fragment@3 {
+		target = <&dsi0>;
+		__overlay__ {
+			status = "okay";
+			mipi_panel: mipi-panel {
+				status = "disabled";
+			};
+		};
+	};
+	fragment@4 {
+		target = <&pinctrl>;
+		__overlay__ {
+			gpio_init_config {
+				gpio_init: gpio-init {
+                                           rockchip,pins =
+						<7 22 3 &pcfg_pull_none>;
+				};
+			};
+		};
+	};
+
+};
