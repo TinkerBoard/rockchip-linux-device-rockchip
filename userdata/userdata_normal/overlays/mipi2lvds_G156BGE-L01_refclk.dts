@@ -1,0 +1,92 @@
+/dts-v1/;
+/plugin/;
+/ {
+	compatible = "rockchip,rk3399-excavator-linux", "rockchip,rk3399";
+
+	fragment@0 {
+		target = <&pwm0>;
+		__overlay__ {
+			status = "okay";
+		};
+	};
+	fragment@1 {
+		target = <&backlight>;
+		__overlay__ {
+			status = "okay";
+			pwms = <&pwm0 0 5000000 0>;
+                        power-sequence-reverse;
+                        disable_delay = <15>;
+                        minimal-brightness-level = <30>;
+		};
+	};
+	fragment@2 {
+		target = <&i2c4>;
+		__overlay__ {
+			status = "okay";
+			dsi_lvds_bridge: sn65dsi84@2c {
+				status = "okay";
+				lvds-clk-rate = <72000000>;
+				lvds-format = <2>;
+				lvds-bpp = <24>;
+				lvds-width-mm = <344>;
+				lvds-height-mm = <193>;
+				sync_delay = <32>;
+                                refclk_multiplier=<3>;
+                                clk_from_refclk;
+
+				t1=<0>;
+				t2=<1>;
+				t3=<500>;
+				t4=<200>;
+				t5=<1>;
+				t6=<0>;
+				t7=<1000>;
+
+				bpc=<8>;
+				bus-format = <0x100a>;
+				dsi,flags = <0x3>;
+				dsi,format = <0>;
+				dsi-lanes = <4>;
+
+				display-timings {
+					lvds {
+						clock-frequency = <72000000>;
+						hactive = <1366>;
+						vactive = <768>;
+						hfront-porch = <50>;
+						hback-porch = <50>;
+						hsync-len = <34>;
+						vfront-porch = <12>;
+						vsync-len = <8>;
+						vback-porch = <12>;
+						hsync-active = <0>;
+						vsync-active = <0>;
+						de-active = <1>;
+						pixelclk-active = <0>;
+					};
+				};
+			};
+		};
+	};
+	fragment@3 {
+		target = <&dsi>;
+		__overlay__ {
+			status = "okay";
+			mipi_panel: mipi-panel {
+				status = "disabled";
+			};
+		};
+	};
+        fragment@4 {
+		target = <&pinctrl>;
+		__overlay__ {
+			gpio_init_config {
+				gpio_init: gpio-init {
+                                           rockchip,pins =
+                                                <1 8 0  &pcfg_pull_none>;
+				};
+			};
+		};
+	};
+
+};
