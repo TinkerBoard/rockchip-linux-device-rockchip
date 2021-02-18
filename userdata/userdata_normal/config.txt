@@ -19,7 +19,10 @@ intf:fiq_debugger=on
 
 ##### Driver Config #####
 
+## Note: auto_ums: Auto enable ums mode while power on with USB connected. ##
+
 conf:eth_wakeup=on
+conf:auto_ums=on
 
 ##### List of device tree overlays to load. Format: overlay=<dtbo name, no extension> <dtbo2> ... #####
 
