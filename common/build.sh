@@ -252,7 +252,7 @@ function build_rootfs(){
 			;;
 		distro)
 			build_distro
-			ROOTFS_IMG=yocto/output/images/rootfs.$RK_ROOTFS_TYPE
+			ROOTFS_IMG=distro/output/images/rootfs.$RK_ROOTFS_TYPE
 			;;
                 buildroot)
 			build_buildroot
