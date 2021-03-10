@@ -1,6 +1,5 @@
 #!/bin/bash
 
-<<<<<<< HEAD
 if [ ! $VERSION ]; then
     VERSION="debug"
 fi
@@ -19,9 +18,7 @@ if [ "$VERSION" == "debug" ]; then
 	RELEASE_NAME="$RELEASE_NAME"-Debug
 fi
 
-=======
 export LC_ALL=C
->>>>>>> asus/rk3399pro_linux_release_v1.4.0_20201010
 unset RK_CFG_TOOLCHAIN
 
 function choose_target_board()
@@ -468,21 +465,11 @@ function build_rootfs(){
 			build_yocto
 			ln -rsf yocto/build/latest/rootfs.img $RK_ROOTFS_DIR/rootfs.ext4
 			;;
-<<<<<<< HEAD
-		distro)
-			build_distro
-			ROOTFS_IMG=distro/output/images/rootfs.$RK_ROOTFS_TYPE
-=======
-		debian)
-			build_debian
-			ln -rsf debian/linaro-rootfs.img $RK_ROOTFS_DIR/rootfs.ext4
-			;;
 		distro)
 			build_distro
 			for f in $(ls distro/output/images/rootfs.*);do
 				ln -rsf $f* $RK_ROOTFS_DIR/
 			done
->>>>>>> asus/rk3399pro_linux_release_v1.4.0_20201010
 			;;
                 buildroot)
 			build_buildroot
@@ -490,10 +477,10 @@ function build_rootfs(){
 				ln -rsf $f* $RK_ROOTFS_DIR/
 			done
 			;;
-                *)
-                        build_debian
-                        ROOTFS_IMG=debian/linaro-rootfs.img
-                        ;;
+		*)
+			build_debian
+			ln -rsf debian/linaro-rootfs.img $RK_ROOTFS_DIR/rootfs.ext4
+			;;
 	esac
 
 	if [ ! -f "$RK_ROOTFS_DIR/$ROOTFS_IMG" ]; then
