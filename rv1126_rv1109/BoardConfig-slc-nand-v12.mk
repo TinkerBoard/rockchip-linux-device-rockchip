@@ -6,16 +6,16 @@ export RK_CHIP=RV1126
 export RK_ARCH=arm
 # Uboot defconfig
 export RK_UBOOT_DEFCONFIG=rv1126
-# Uboot update loader (spl)
+# Loader update spl from Uboot
 export RK_LOADER_UPDATE_SPL=true
 # Uboot image format type: fit(flattened image tree)
 export RK_UBOOT_FORMAT_TYPE=fit
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rv1126_defconfig
 # Kernel defconfig fragment
-export RK_KERNEL_DEFCONFIG_FRAGMENT=
+export RK_KERNEL_DEFCONFIG_FRAGMENT=rv1126-slc-nand.config
 # Kernel dts
-export RK_KERNEL_DTS=rv1109-38-v10-spi-nand
+export RK_KERNEL_DTS=rv1126-evb-ddr3-v12-spi-nand
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
@@ -45,9 +45,7 @@ export RK_OEM_FS_TYPE=ubi
 # Set userdata partition type, including ext2, fat
 export RK_USERDATA_FS_TYPE=ubi
 #OEM config
-export RK_OEM_DIR=oem_ipc
-# OEM build on buildroot
-export RK_OEM_BUILDIN_BUILDROOT=YES
+export RK_OEM_DIR=
 #userdata config, if not define this, system will format by RK_USERDATA_FS_TYPE
 export RK_USERDATA_DIR=
 #
@@ -70,9 +68,7 @@ export RK_USERDATA_DIR=
 #
 #misc image
 export RK_MISC=
-#choose enable distro module
-export RK_DISTRO_MODULE=
 # Define pre-build script for this board
 export RK_BOARD_PRE_BUILD_SCRIPT=app-build.sh
 # Define package-file for update.img
-export RK_PACKAGE_FILE=rv1109-package-file-spi-nand
+export RK_PACKAGE_FILE=rv1126-package-file-spi-nand

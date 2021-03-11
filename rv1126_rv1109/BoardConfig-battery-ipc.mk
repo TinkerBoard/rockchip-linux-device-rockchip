@@ -32,21 +32,17 @@ export RK_CFG_PCBA=
 export RK_JOBS=12
 # target chip
 export RK_TARGET_PRODUCT=rv1126_rv1109
-# Set rootfs type, including ext2 ext4 squashfs
-export RK_ROOTFS_TYPE=ext4
-# rootfs image path
-export RK_ROOTFS_IMG=rockdev/rootfs.${RK_ROOTFS_TYPE}
 # Set ramboot image type
 export RK_RAMBOOT_TYPE=ROMFS
 # Set oem partition type, including ext2 squashfs
-export RK_OEM_FS_TYPE=squashfs
+export RK_OEM_FS_TYPE=ext2
 # Set userdata partition type, including ext2, fat
 export RK_USERDATA_FS_TYPE=ext2
 # OEM config
 export RK_OEM_DIR=oem_battery_ipc
 # OEM build on buildroot
 export RK_OEM_BUILDIN_BUILDROOT=YES
-#userdata config
+#userdata config, if not define this, system will format by RK_USERDATA_FS_TYPE
 export RK_USERDATA_DIR=userdata_empty
 #misc image
 export RK_MISC=

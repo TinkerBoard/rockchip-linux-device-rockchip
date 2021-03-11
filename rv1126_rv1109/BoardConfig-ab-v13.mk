@@ -3,15 +3,17 @@
 # Target arch
 export RK_ARCH=arm
 # Uboot defconfig
-export RK_UBOOT_DEFCONFIG=rv1126
+export RK_UBOOT_DEFCONFIG=rv1126-ab
 # Uboot image format type: fit(flattened image tree)
 export RK_UBOOT_FORMAT_TYPE=fit
+# Uboot update loader (spl)
+export RK_LOADER_UPDATE_SPL=true
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rv1126_defconfig
 # Kernel defconfig fragment
 export RK_KERNEL_DEFCONFIG_FRAGMENT=
 # Kernel dts
-export RK_KERNEL_DTS=rv1126-evb-ddr3-v12
+export RK_KERNEL_DTS=rv1126-evb-ddr3-v13
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
@@ -19,13 +21,13 @@ export RK_KERNEL_IMG=kernel/arch/arm/boot/zImage
 # kernel image format type: fit(flattened image tree)
 export RK_KERNEL_FIT_ITS=boot.its
 # parameter for GPT table
-export RK_PARAMETER=parameter-buildroot-fit.txt
+export RK_PARAMETER=parameter-ab-fit.txt
 # Buildroot config
-export RK_CFG_BUILDROOT=rockchip_rv1126_rv1109
+export RK_CFG_BUILDROOT=rockchip_rv1126_rv1109_ab
 # Recovery config
-export RK_CFG_RECOVERY=rockchip_rv1126_rv1109_recovery
+export RK_CFG_RECOVERY=
 # Recovery image format type: fit(flattened image tree)
-export RK_RECOVERY_FIT_ITS=boot4recovery.its
+export RK_RECOVERY_FIT_ITS=
 # ramboot config
 export RK_CFG_RAMBOOT=
 # Pcba config
@@ -52,6 +54,8 @@ export RK_OEM_BUILDIN_BUILDROOT=YES
 export RK_USERDATA_DIR=userdata_normal
 #misc image
 export RK_MISC=wipe_all-misc.img
+# Define package-file for update.img
+export RK_PACKAGE_FILE=rv1126_rv1109-package-file-2-ab
 #choose enable distro module
 export RK_DISTRO_MODULE=
 # Define pre-build script for this board
