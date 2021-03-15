@@ -6,25 +6,16 @@ fi
 echo "VERSION: $VERSION"
 
 if [ ! $VERSION_NUMBER ]; then
-	VERSION_NUMBER="eng"-"$USER"-"$(date +%Y%m%d)"
-	RELEASE_NAME="Tinker_Board-Debian-Stretch-"
-	#FULL_IMAGE_NAME=Tinker_Board-Debian-Stretch-"$VERSION_NUMBER"
-	#UBOOT_IMAGE_NAME=Tinker_Board-Debian-Stretch-Bootloader-"$VERSION_NUMBER"
-else
-	VERSION_NUMBER="$VERSION_NUMBER"-"$(date +%Y%m%d)"
-	RELEASE_NAME="Tinker_Board-Debian-Stretch-v"
-	#FULL_IMAGE_NAME=Tinker_Board-Debian-Stretch-V"$VERSION_NUMBER"
-        #UBOOT_IMAGE_NAME=Tinker_Board-Debian-Stretch-Bootloader-V"$VERSION_NUMBER"
+    VERSION_NUMBER="eng"-"$USER"
 fi
+VERSION_NUMBER="$VERSION_NUMBER-$(date +%Y%m%d)"
 
 if [ "$VERSION" == "debug" ]; then
-	VERSION_NUMBER="$VERSION_NUMBER"-Debug
-	#FULL_IMAGE_NAME="$FULL_IMAGE_NAME"-Debug
-        #UBOOT_IMAGE_NAME="$UBOOT_IMAGE_NAME"-Debug
+    VERSION_NUMBER="$VERSION_NUMBER-debug"
 fi
 echo "VERSION_NUMBER: $VERSION_NUMBER"
 
-RELEASE_NAME="$RELEASE_NAME""$VERSION_NUMBER"
+RELEASE_NAME="Tinker_Board-Debian-Stretch-$VERSION_NUMBER"
 echo "RELEASE_NAME: $RELEASE_NAME"
 
 export LC_ALL=C
@@ -102,7 +93,6 @@ function usage()
 	echo "ramboot            -build ramboot image"
 	echo "multi-npu_boot     -build boot image for multi-npu board"
 	echo "yocto              -build yocto rootfs"
-	echo "debian_base        -build base debian system"
 	echo "debian             -build debian9 stretch rootfs"
 	echo "distro             -build debian10 buster rootfs"
 	echo "pcba               -build pcba"
@@ -278,27 +268,6 @@ function build_yocto(){
 	fi
 }
 
-function build_debian_base(){
-        cd debian
-
-        if [ "$RK_ARCH" == "arm" ]; then
-                ARCH=armhf
-        fi
-        if [ "$RK_ARCH" == "arm64" ]; then
-                ARCH=arm64
-        fi
-
-        RELEASE=stretch TARGET=desktop ARCH=$ARCH ./mk-base-debian.sh
-
-        cd ..
-        if [ $? -eq 0 ]; then
-                echo "====Build Debian9 base ok!===="
-        else
-                echo "====Build Debian9 base failed!===="
-                exit 1
-        fi
-}
-
 function build_debian(){
 	cd debian
 
@@ -314,7 +283,7 @@ function build_debian(){
 		RELEASE=stretch TARGET=desktop ARCH=$ARCH ./mk-base-debian.sh
 	fi
 
-	VERSION_NUMBER=$VERSION_NUMBER VERSION=$VERSION ARCH=$ARCH ./mk-rootfs-stretch.sh
+	VERSION=$VERSION VERSION_NUMBER=$VERSION_NUMBER ARCH=$ARCH ./mk-rootfs-stretch.sh
 
 	./mk-image.sh
 	cd ..
@@ -478,6 +447,8 @@ function build_updateimg(){
 			exit 1
 		fi
 	fi
+    # Build the SD boot format image
+    sudo $TOP_DIR/rkbin/scripts/sdboot.sh
 }
 
 function build_otapackage(){
@@ -499,9 +470,10 @@ function build_otapackage(){
 
 function build_save(){
 	IMAGE_PATH=$TOP_DIR/rockdev
-	#DATE=$(date  +%Y%m%d.%H%M)
+	DATE=$(date  +%Y%m%d.%H%M)
+#	STUB_PATH=Image/"$RK_KERNEL_DTS"_"$DATE"_RELEASE_TEST
 	STUB_PATH=IMAGE/"$RELEASE_NAME"
-	#STUB_PATH="$(echo $STUB_PATH | tr '[:lower:]' '[:upper:]')"
+#	STUB_PATH="$(echo $STUB_PATH | tr '[:lower:]' '[:upper:]')"
 	export STUB_PATH=$TOP_DIR/$STUB_PATH
 	export STUB_PATCH_PATH=$STUB_PATH/PATCHES
 	mkdir -p $STUB_PATH
@@ -510,7 +482,7 @@ function build_save(){
 	$TOP_DIR/.repo/repo/repo forall -c "$TOP_DIR/device/rockchip/common/gen_patches_body.sh"
 
 	#Copy stubs
-	#$TOP_DIR/.repo/repo/repo manifest -r -o $STUB_PATH/manifest_${DATE}.xml
+#	$TOP_DIR/.repo/repo/repo manifest -r -o $STUB_PATH/manifest_${DATE}.xml
 	$TOP_DIR/.repo/repo/repo manifest -r -o $STUB_PATH/manifest_$RELEASE_NAME.xml
 	mkdir -p $STUB_PATCH_PATH/kernel
 	cp $TOP_DIR/kernel/.config $STUB_PATCH_PATH/kernel
@@ -518,16 +490,15 @@ function build_save(){
 	mkdir -p $STUB_PATH/IMAGES/
 	cp $IMAGE_PATH/* $STUB_PATH/IMAGES/
 
-	if [ "$VERSION" == "release" ]; then
-		mkdir mkdir -p $STUB_PATH/$RELEASE_NAME
-		mv $STUB_PATH/IMAGES/update.img $STUB_PATH/$RELEASE_NAME/.
-		#cp -rp $TOP_DIR/device/rockchip/tinker_edge_r/flash/. $STUB_PATH/$RELEASE_NAME
-		cd $STUB_PATH
-		zip -r $RELEASE_NAME.zip $RELEASE_NAME
-		sha256sum $RELEASE_NAME.zip > $RELEASE_NAME.zip.sha256sum
-		cd -
-		rm -rf $STUB_PATH/$RELEASE_NAME
-	fi
+    if [ "$VERSION" == "release" ]; then
+        mkdir -p $STUB_PATH/$RELEASE_NAME
+        mv $STUB_PATH/IMAGES/sdcard_full.img $STUB_PATH/$RELEASE_NAME.img
+        cd $STUB_PATH
+        zip $RELEASE_NAME.zip $RELEASE_NAME.img
+        sha256sum $RELEASE_NAME.zip > $RELEASE_NAME.zip.sha256sum
+        cd -
+        rm -rf $STUB_PATH/$RELEASE_NAME.img
+    fi
 
 	#Save build command info
 	echo "UBOOT:  defconfig: $RK_UBOOT_DEFCONFIG" >> $STUB_PATH/build_cmd_info
@@ -585,7 +556,3 @@ for option in ${OPTIONS:-allsave}; do
 			;;
 	esac
 done
-#								mv sdcard_full.img $FULL_IMAGE_NAME.img
-#									mv sdcard_uboot.img $UBOOT_IMAGE_NAME.img
-#										zip $FULL_IMAGE_NAME.zip $FULL_IMAGE_NAME.img
-#											zip $UBOOT_IMAGE_NAME.zip $UBOOT_IMAGE_NAME.img
