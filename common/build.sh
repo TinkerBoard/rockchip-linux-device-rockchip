@@ -552,7 +552,7 @@ function build_all(){
 	build_kernel
 	build_modules
 	build_toolchain
-	build_rootfs ${RK_ROOTFS_SYSTEM:-buildroot}
+	build_rootfs ${RK_ROOTFS_SYSTEM:-debian}
 	build_recovery
 	build_ramboot
 
