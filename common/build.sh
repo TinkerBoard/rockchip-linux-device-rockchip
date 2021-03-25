@@ -670,7 +670,7 @@ function build_save(){
 
 	#Copy stubs
 	#.repo/repo/repo manifest -r -o $STUB_PATH/manifest_${DATE}.xml
-  .repo/repo/repo manifest -r -o $STUB_PATH/manifest_${$RELEASE_NAME}.xml
+  .repo/repo/repo manifest -r -o $STUB_PATH/manifest_${RELEASE_NAME}.xml
 	mkdir -p $STUB_PATCH_PATH/kernel
 	cp kernel/.config $STUB_PATCH_PATH/kernel
 	cp kernel/vmlinux $STUB_PATCH_PATH/kernel
