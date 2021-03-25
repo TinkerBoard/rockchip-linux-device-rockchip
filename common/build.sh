@@ -1,22 +1,22 @@
 #!/bin/bash
 
-if [ ! $VERSION ]; then
-	VERSION="debug"
+if [ ! ${VERSION} ]; then
+  VERSION="debug"
 fi
-echo "VERSION: $VERSION"
+echo "VERSION: ${VERSION}"
 
-if [ ! $VERSION_NUMBER ]; then
-    VERSION_NUMBER="eng"-"$USER"
+if [ ! ${VERSION_NUMBER} ]; then
+  VERSION_NUMBER="eng-${USER}"
 fi
-VERSION_NUMBER="$VERSION_NUMBER-$(date +%Y%m%d)"
+VERSION_NUMBER="${VERSION_NUMBER}-$(date +%Y%m%d)"
 
-if [ "$VERSION" == "debug" ]; then
-    VERSION_NUMBER="$VERSION_NUMBER-debug"
+if [ "${VERSION}" == "debug" ]; then
+  VERSION_NUMBER="${VERSION_NUMBER}-debug"
 fi
 echo "VERSION_NUMBER: $VERSION_NUMBER"
 
-RELEASE_NAME="Tinker_Board-Debian-Stretch-$VERSION_NUMBER"
-echo "RELEASE_NAME: $RELEASE_NAME"
+RELEASE_NAME="Tinker_Board-Debian-Buster-${VERSION_NUMBER}"
+echo "RELEASE_NAME: ${RELEASE_NAME}"
 
 export LC_ALL=C
 unset RK_CFG_TOOLCHAIN
@@ -209,7 +209,7 @@ function usage()
 	echo "kernel             -build kernel"
 	echo "modules            -build kernel modules"
 	echo "toolchain          -build toolchain"
-	echo "rootfs             -build default rootfs, currently build debian9 as default"
+	echo "rootfs             -build default rootfs, currently build debian10 buster/x11 as default"
 	echo "buildroot          -build buildroot rootfs"
 	echo "ramboot            -build ramboot image"
 	echo "multi-npu_boot     -build boot image for multi-npu board"
@@ -430,15 +430,11 @@ function build_debian(){
 		*) ARCH=arm64 ;;
 	esac
 
-<<<<<<< HEAD
-	VERSION=$VERSION VERSION_NUMBER=$VERSION_NUMBER ARCH=$ARCH ./mk-rootfs-stretch.sh
-=======
 	cd debian
 	[ ! -e linaro-buster-alip-*.tar.gz ] && \
 		RELEASE=buster TARGET=desktop ARCH=$ARCH ./mk-base-debian.sh
->>>>>>> asus/rk3288_linux_release_v2.3.0_20201203
 
-	VERSION=debug ARCH=$ARCH ./mk-rootfs-buster.sh
+	VERSION=${VERSION} VERSION_NUMBER=${VERSION_NUMBER} ARCH=$ARCH ./mk-rootfs-buster.sh
 	./mk-image.sh
 
 	finish_build
@@ -474,16 +470,11 @@ function build_rootfs(){
 			ln -rsf yocto/build/latest/rootfs.img \
 				$RK_ROOTFS_DIR/rootfs.ext4
 			;;
-<<<<<<< HEAD
 		buildroot)
 			build_buildroot
-                        ROOTFS_IMG=buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.$RK_ROOTFS_TYPE
-=======
-		debian)
-			build_debian
-			ln -rsf debian/linaro-rootfs.img \
-				$RK_ROOTFS_DIR/rootfs.ext4
->>>>>>> asus/rk3288_linux_release_v2.3.0_20201203
+			for f in $(ls buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.*);do
+				ln -rsf $f $RK_ROOTFS_DIR/
+			done
 			;;
 		distro)
 			build_distro
@@ -492,15 +483,9 @@ function build_rootfs(){
 			done
 			;;
 		*)
-<<<<<<< HEAD
 			build_debian
-                        ROOTFS_IMG=debian/linaro-rootfs.img
-=======
-			build_buildroot
-			for f in $(ls buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.*);do
-				ln -rsf $f $RK_ROOTFS_DIR/
-			done
->>>>>>> asus/rk3288_linux_release_v2.3.0_20201203
+			ln -rsf debian/linaro-rootfs.img \
+				$RK_ROOTFS_DIR/rootfs.ext4
 			;;
 	esac
 
@@ -647,13 +632,11 @@ function build_updateimg(){
 		fi
 		mv update.img $IMAGE_PATH
 	fi
-<<<<<<< HEAD
-    # Build the SD boot format image
-    sudo $TOP_DIR/rkbin/scripts/sdboot.sh
-=======
+
+  # Build the SD boot format image
+  sudo $TOP_DIR/rkbin/scripts/sdboot.sh
 
 	finish_build
->>>>>>> asus/rk3288_linux_release_v2.3.0_20201203
 }
 
 function build_otapackage(){
@@ -674,9 +657,9 @@ function build_otapackage(){
 function build_save(){
 	IMAGE_PATH=$TOP_DIR/rockdev
 	DATE=$(date  +%Y%m%d.%H%M)
-#	STUB_PATH=Image/"$RK_KERNEL_DTS"_"$DATE"_RELEASE_TEST
-	STUB_PATH=IMAGE/"$RELEASE_NAME"
-#	STUB_PATH="$(echo $STUB_PATH | tr '[:lower:]' '[:upper:]')"
+	#STUB_PATH=Image/"$RK_KERNEL_DTS"_"$DATE"_RELEASE_TEST
+	#STUB_PATH="$(echo $STUB_PATH | tr '[:lower:]' '[:upper:]')"
+  STUB_PATH=IMAGE/"$RELEASE_NAME"
 	export STUB_PATH=$TOP_DIR/$STUB_PATH
 	export STUB_PATCH_PATH=$STUB_PATH/PATCHES
 	mkdir -p $STUB_PATH
@@ -686,27 +669,23 @@ function build_save(){
 		"$TOP_DIR/device/rockchip/common/gen_patches_body.sh"
 
 	#Copy stubs
-<<<<<<< HEAD
-#	$TOP_DIR/.repo/repo/repo manifest -r -o $STUB_PATH/manifest_${DATE}.xml
-	$TOP_DIR/.repo/repo/repo manifest -r -o $STUB_PATH/manifest_$RELEASE_NAME.xml
-=======
-	.repo/repo/repo manifest -r -o $STUB_PATH/manifest_${DATE}.xml
->>>>>>> asus/rk3288_linux_release_v2.3.0_20201203
+	#.repo/repo/repo manifest -r -o $STUB_PATH/manifest_${DATE}.xml
+  .repo/repo/repo manifest -r -o $STUB_PATH/manifest_${$RELEASE_NAME}.xml
 	mkdir -p $STUB_PATCH_PATH/kernel
 	cp kernel/.config $STUB_PATCH_PATH/kernel
 	cp kernel/vmlinux $STUB_PATCH_PATH/kernel
 	mkdir -p $STUB_PATH/IMAGES/
 	cp $IMAGE_PATH/* $STUB_PATH/IMAGES/
 
-    if [ "$VERSION" == "release" ]; then
-        mkdir -p $STUB_PATH/$RELEASE_NAME
-        mv $STUB_PATH/IMAGES/sdcard_full.img $STUB_PATH/$RELEASE_NAME.img
-        cd $STUB_PATH
-        zip $RELEASE_NAME.zip $RELEASE_NAME.img
-        sha256sum $RELEASE_NAME.zip > $RELEASE_NAME.zip.sha256sum
-        cd -
-        rm -rf $STUB_PATH/$RELEASE_NAME.img
-    fi
+  if [ "$VERSION" == "release" ]; then
+    mkdir -p $STUB_PATH/$RELEASE_NAME
+    mv $STUB_PATH/IMAGES/sdcard_full.img $STUB_PATH/$RELEASE_NAME.img
+    cd $STUB_PATH
+    zip $RELEASE_NAME.zip $RELEASE_NAME.img
+    sha256sum $RELEASE_NAME.zip > $RELEASE_NAME.zip.sha256sum
+    cd -
+    rm -rf $STUB_PATH/$RELEASE_NAME.img
+  fi
 
 	#Save build command info
 	echo "UBOOT:  defconfig: $RK_UBOOT_DEFCONFIG" >> $STUB_PATH/build_cmd_info

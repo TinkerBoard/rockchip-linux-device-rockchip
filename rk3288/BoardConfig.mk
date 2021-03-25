@@ -1,1 +1,1 @@
-BoardConfig-rk3288-evb-rk808.mk
+BoardConfig-tinker_board.mk

@@ -29,11 +29,6 @@ ROOTFS_IMG=$TOP_DIR/$RK_ROOTFS_IMG
 ROOTFS_IMG_SOURCE=$TOP_DIR/buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.$RK_ROOTFS_TYPE
 RAMBOOT_IMG=$TOP_DIR/buildroot/output/$RK_CFG_RAMBOOT/images/ramboot.img
 RECOVERY_IMG=$TOP_DIR/buildroot/output/$RK_CFG_RECOVERY/images/recovery.img
-<<<<<<< HEAD
-# Use fakeroot built from recovery since we do not build buildroot.
-#FAKEROOT_TOOL=$TOP_DIR/buildroot/output/$RK_CFG_BUILDROOT/host/bin/fakeroot
-FAKEROOT_TOOL=$TOP_DIR/buildroot/output/$RK_CFG_RECOVERY/host/bin/fakeroot
-=======
 if which fakeroot; then
 FAKEROOT_TOOL="`which fakeroot`"
 else
@@ -41,7 +36,6 @@ else
 	echo -e "  sudo apt-get install fakeroot"
 	exit -1
 fi
->>>>>>> asus/rk3288_linux_release_v2.3.0_20201203
 OEM_FAKEROOT_SCRIPT=$ROCKDEV/oem.fs
 USERDATA_FAKEROOT_SCRIPT=$ROCKDEV/userdata.fs
 TRUST_IMG=$TOP_DIR/u-boot/trust.img
@@ -56,18 +50,16 @@ mkdir -p $ROCKDEV
 # Require buildroot host tools to do image packing.
 if [ ! -d "$TARGET_OUTPUT_DIR" ]; then
     echo "Source buildroot/build/envsetup.sh"
-<<<<<<< HEAD
-    # Use recovery host tools since we do not build buildroot.
-    #source $TOP_DIR/buildroot/build/envsetup.sh $RK_CFG_BUILDROOT
-    source $TOP_DIR/buildroot/build/envsetup.sh $RK_CFG_RECOVERY
-=======
 	if [ "${RK_CFG_RAMBOOT}x" != "x" ];then
 		source $TOP_DIR/buildroot/build/envsetup.sh $RK_CFG_RAMBOOT
 	fi
-	if [ "${RK_CFG_BUILDROOT}x" != "x" ];then
-		source $TOP_DIR/buildroot/build/envsetup.sh $RK_CFG_BUILDROOT
+	# Use recovery host tools since we do not build buildroot.
+	#if [ "${RK_CFG_BUILDROOT}x" != "x" ];then
+		#source $TOP_DIR/buildroot/build/envsetup.sh $RK_CFG_BUILDROOT
+	#fi
+	if [ "${RK_CFG_RECOVERY}x" != "x" ];then
+		source $TOP_DIR/buildroot/build/envsetup.sh $RK_CFG_RECOVERY
 	fi
->>>>>>> asus/rk3288_linux_release_v2.3.0_20201203
 fi
 
 check_partition_size() {
