@@ -159,7 +159,7 @@ function usagerootfs()
 		fi
 	fi
 
-	case "${RK_ROOTFS_SYSTEM:-debian}" in
+	case "${RK_ROOTFS_SYSTEM:-buildroot}" in
 		yocto)
 			;;
 		debian)
@@ -209,7 +209,7 @@ function usage()
 	echo "kernel             -build kernel"
 	echo "modules            -build kernel modules"
 	echo "toolchain          -build toolchain"
-	echo "rootfs             -build default rootfs, currently build debian10 buster/x11 as default"
+	echo "rootfs             -build default rootfs, currently build buildroot as default"
 	echo "buildroot          -build buildroot rootfs"
 	echo "ramboot            -build ramboot image"
 	echo "multi-npu_boot     -build boot image for multi-npu board"
@@ -470,11 +470,10 @@ function build_rootfs(){
 			ln -rsf yocto/build/latest/rootfs.img \
 				$RK_ROOTFS_DIR/rootfs.ext4
 			;;
-		buildroot)
-			build_buildroot
-			for f in $(ls buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.*);do
-				ln -rsf $f $RK_ROOTFS_DIR/
-			done
+		debian)
+			build_debian
+			ln -rsf debian/linaro-rootfs.img \
+				$RK_ROOTFS_DIR/rootfs.ext4
 			;;
 		distro)
 			build_distro
@@ -483,9 +482,10 @@ function build_rootfs(){
 			done
 			;;
 		*)
-			build_debian
-			ln -rsf debian/linaro-rootfs.img \
-				$RK_ROOTFS_DIR/rootfs.ext4
+			build_buildroot
+			for f in $(ls buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.*);do
+				ln -rsf $f $RK_ROOTFS_DIR/
+			done
 			;;
 	esac
 
@@ -552,7 +552,7 @@ function build_all(){
 	build_kernel
 	build_modules
 	build_toolchain
-	build_rootfs ${RK_ROOTFS_SYSTEM:-debian}
+	build_rootfs ${RK_ROOTFS_SYSTEM:-buildroot}
 	build_recovery
 	build_ramboot
 
