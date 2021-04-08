@@ -7,7 +7,7 @@ export RK_UBOOT_DEFCONFIG=rk3288
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
 # Kernel dts
-export RK_KERNEL_DTS=rk3288-tinker_board
+export RK_KERNEL_DTS=rk3288-tinker-board
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
