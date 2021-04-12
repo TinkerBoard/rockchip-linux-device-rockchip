@@ -678,7 +678,6 @@ function build_save(){
 	cp $IMAGE_PATH/* $STUB_PATH/IMAGES/
 
   if [ "$VERSION" == "release" ]; then
-    mkdir -p $STUB_PATH/$RELEASE_NAME
     mv $STUB_PATH/IMAGES/sdcard_full.img $STUB_PATH/$RELEASE_NAME.img
     cd $STUB_PATH
     zip $RELEASE_NAME.zip $RELEASE_NAME.img
