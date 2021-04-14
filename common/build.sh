@@ -1,22 +1,22 @@
 #!/bin/bash
 
-if [ ! $VERSION ]; then
-    VERSION="debug"
+if [ ! ${VERSION} ]; then
+  VERSION="debug"
 fi
-echo "VERSION: $VERSION"
+echo "VERSION: ${VERSION}"
 
-if [ ! $VERSION_NUMBER ]; then
-	VERSION_NUMBER="eng"-"$USER"-"$(date  +%Y%m%d)"
-	RELEASE_NAME=Tinker_Edge_R-Debian-Stretch-"$VERSION_NUMBER"
-else
-	VERSION_NUMBER="$VERSION_NUMBER"-"$(date  +%Y%m%d)"
-	RELEASE_NAME=Tinker_Edge_R-Debian-Stretch-V"$VERSION_NUMBER"
+if [ ! ${VERSION_NUMBER} ]; then
+  VERSION_NUMBER="eng-${USER}"
+fi
+VERSION_NUMBER="${VERSION_NUMBER}-$(date +%Y%m%d)"
+
+if [ "${VERSION}" == "debug" ]; then
+  VERSION_NUMBER="${VERSION_NUMBER}-debug"
 fi
 echo "VERSION_NUMBER: $VERSION_NUMBER"
 
-if [ "$VERSION" == "debug" ]; then
-	RELEASE_NAME="$RELEASE_NAME"-Debug
-fi
+RELEASE_NAME="Tinker_Edge_R-Debian-Buster-${VERSION_NUMBER}"
+echo "RELEASE_NAME: ${RELEASE_NAME}"
 
 export LC_ALL=C
 unset RK_CFG_TOOLCHAIN
@@ -208,19 +208,13 @@ function usage()
 	echo "kernel             -build kernel"
 	echo "modules            -build kernel modules"
 	echo "toolchain          -build toolchain"
-	echo "rootfs             -build default rootfs, currently build debian9 as default"
+	echo "rootfs             -build default rootfs, currently build buildroot as default"
 	echo "buildroot          -build buildroot rootfs"
 	echo "ramboot            -build ramboot image"
 	echo "multi-npu_boot     -build boot image for multi-npu board"
 	echo "yocto              -build yocto rootfs"
-<<<<<<< HEAD
-	echo "debian_base        -build base debian system"
-	echo "debian             -build debian9 stretch rootfs"
-	echo "distro             -build debian10 buster rootfs"
-=======
 	echo "debian             -build debian10 buster/x11 rootfs"
 	echo "distro             -build debian10 buster/wayland rootfs"
->>>>>>> asus/rk3399pro_linux_release_v1.4.1_20201203
 	echo "pcba               -build pcba"
 	echo "recovery           -build recovery"
 	echo "all                -build uboot, kernel, rootfs, recovery image"
@@ -428,15 +422,11 @@ function build_debian(){
 		*) ARCH=arm64 ;;
 	esac
 
-<<<<<<< HEAD
-	VERSION_NUMBER=$VERSION_NUMBER VERSION=$VERSION ARCH=$ARCH ./mk-rootfs-stretch.sh
-=======
 	cd debian
 	[ ! -e linaro-buster-alip-*.tar.gz ] && \
 		RELEASE=buster TARGET=desktop ARCH=$ARCH ./mk-base-debian.sh
->>>>>>> asus/rk3399pro_linux_release_v1.4.1_20201203
 
-	VERSION=debug ARCH=$ARCH ./mk-rootfs-buster.sh
+	VERSION=${VERSION} VERSION_NUMBER=${VERSION_NUMBER} ARCH=$ARCH ./mk-rootfs-buster.sh
 	./mk-image.sh
 
 	finish_build
@@ -472,29 +462,22 @@ function build_rootfs(){
 			ln -rsf yocto/build/latest/rootfs.img \
 				$RK_ROOTFS_DIR/rootfs.ext4
 			;;
-<<<<<<< HEAD
-=======
 		debian)
 			build_debian
 			ln -rsf debian/linaro-rootfs.img \
 				$RK_ROOTFS_DIR/rootfs.ext4
 			;;
->>>>>>> asus/rk3399pro_linux_release_v1.4.1_20201203
 		distro)
 			build_distro
 			for f in $(ls distro/output/images/rootfs.*);do
 				ln -rsf $f $RK_ROOTFS_DIR/
 			done
 			;;
-                buildroot)
+		*)
 			build_buildroot
 			for f in $(ls buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.*);do
 				ln -rsf $f $RK_ROOTFS_DIR/
 			done
-			;;
-		*)
-			build_debian
-			ln -rsf debian/linaro-rootfs.img $RK_ROOTFS_DIR/rootfs.ext4
 			;;
 	esac
 
@@ -506,28 +489,6 @@ function build_rootfs(){
 	ln -rsf $RK_ROOTFS_DIR/$ROOTFS_IMG $RK_ROOTFS_IMG
 
 	finish_build
-}
-
-function build_debian_base(){
-        # build debian base
-        echo "===========Start build debian base==========="
-        echo "TARGET_ARCH=$RK_ARCH"
-        echo "========================================"
-
-	if [ "$RK_ARCH" == "arm" ]; then
-                ARCH=armhf
-        fi
-        if [ "$RK_ARCH" == "arm64" ]; then
-                ARCH=arm64
-        fi
-
-	cd $TOP_DIR/debian && RELEASE=stretch TARGET=desktop ARCH=$ARCH ./mk-base-debian.sh && cd -
-        if [ $? -eq 0 ]; then
-                echo "====Build debian base ok!===="
-        else
-                echo "====Build debian base failed!===="
-                exit 1
-        fi
 }
 
 function build_recovery(){
@@ -581,13 +542,8 @@ function build_all(){
 
 	build_loader
 	build_kernel
-<<<<<<< HEAD
-	build_toolchain && \
-	build_rootfs ${RK_ROOTFS_SYSTEM:-debian}
-=======
 	build_toolchain
 	build_rootfs ${RK_ROOTFS_SYSTEM:-buildroot}
->>>>>>> asus/rk3399pro_linux_release_v1.4.1_20201203
 	build_recovery
 	build_ramboot
 
@@ -667,6 +623,9 @@ function build_updateimg(){
 		mv update.img $IMAGE_PATH
 	fi
 
+  # Build the SD boot format image
+  sudo $TOP_DIR/rkbin/scripts/sdboot.sh
+
 	finish_build
 }
 
@@ -687,43 +646,35 @@ function build_otapackage(){
 
 function build_save(){
 	IMAGE_PATH=$TOP_DIR/rockdev
-	#DATE=$(date  +%Y%m%d.%H%M)
-	STUB_PATH=IMAGE/"$RELEASE_NAME"
+	DATE=$(date  +%Y%m%d.%H%M)
+	#STUB_PATH=Image/"$RK_KERNEL_DTS"_"$DATE"_RELEASE_TEST
 	#STUB_PATH="$(echo $STUB_PATH | tr '[:lower:]' '[:upper:]')"
+  STUB_PATH=IMAGE/"$RELEASE_NAME"
 	export STUB_PATH=$TOP_DIR/$STUB_PATH
 	export STUB_PATCH_PATH=$STUB_PATH/PATCHES
 	mkdir -p $STUB_PATH
 
 	#Generate patches
-<<<<<<< HEAD
-	#$TOP_DIR/.repo/repo/repo forall -c "$TOP_DIR/device/rockchip/common/gen_patches_body.sh"
-
-	#Copy stubs
-	#$TOP_DIR/.repo/repo/repo manifest -r -o $STUB_PATH/manifest_$(echo "$RK_KERNEL_DTS"_DEBIAN_"$VERSION_NUMBER"_"$VERSION" | tr '[:lower:]' '[:upper:]').xml
-	#$TOP_DIR/.repo/repo/repo manifest -r -o $STUB_PATH/manifest_$RELEASE_NAME.xml
-=======
 	.repo/repo/repo forall -c \
 		"$TOP_DIR/device/rockchip/common/gen_patches_body.sh"
 
 	#Copy stubs
-	.repo/repo/repo manifest -r -o $STUB_PATH/manifest_${DATE}.xml
->>>>>>> asus/rk3399pro_linux_release_v1.4.1_20201203
+	#.repo/repo/repo manifest -r -o $STUB_PATH/manifest_${DATE}.xml
+  .repo/repo/repo manifest -r -o $STUB_PATH/manifest_${RELEASE_NAME}.xml
 	mkdir -p $STUB_PATCH_PATH/kernel
 	cp kernel/.config $STUB_PATCH_PATH/kernel
 	cp kernel/vmlinux $STUB_PATCH_PATH/kernel
 	mkdir -p $STUB_PATH/IMAGES/
 	cp $IMAGE_PATH/* $STUB_PATH/IMAGES/
 
-	if [ "$VERSION" == "release" ]; then
-		mkdir mkdir -p $STUB_PATH/$RELEASE_NAME
-		mv $STUB_PATH/IMAGES/update.img $STUB_PATH/$RELEASE_NAME/.
-		cp -rp $TOP_DIR/device/rockchip/tinker_edge_r/flash/. $STUB_PATH/$RELEASE_NAME
-		cd $STUB_PATH
-		zip -r $RELEASE_NAME.zip $RELEASE_NAME
-		sha256sum $RELEASE_NAME.zip > $RELEASE_NAME.zip.sha256sum
-		cd -
-		rm -rf $STUB_PATH/$RELEASE_NAME
-	fi
+  if [ "$VERSION" == "release" ]; then
+    mv $STUB_PATH/IMAGES/sdcard_full.img $STUB_PATH/$RELEASE_NAME.img
+    cd $STUB_PATH
+    zip $RELEASE_NAME.zip $RELEASE_NAME.img
+    sha256sum $RELEASE_NAME.zip > $RELEASE_NAME.zip.sha256sum
+    cd -
+    rm -rf $STUB_PATH/$RELEASE_NAME.img
+  fi
 
 	#Save build command info
 	echo "UBOOT:  defconfig: $RK_UBOOT_DEFCONFIG" >> $STUB_PATH/build_cmd_info
