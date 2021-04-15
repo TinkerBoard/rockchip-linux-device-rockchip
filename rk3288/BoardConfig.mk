@@ -1,1 +1,1 @@
-BoardConfig-tinker_board.mk
+BoardConfig-rk3288-tinker_board.mk
