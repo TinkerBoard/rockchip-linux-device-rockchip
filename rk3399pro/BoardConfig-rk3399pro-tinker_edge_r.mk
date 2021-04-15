@@ -7,7 +7,7 @@ export RK_UBOOT_DEFCONFIG=tinker_edge_r
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=tinker_edge_r_defconfig
 # Kernel dts
-export RK_KERNEL_DTS=tinker_edge_r
+export RK_KERNEL_DTS=rk3399pro-tinker_edge_r
 # boot image type
 export RK_BOOT_IMG=boot.img
 # kernel image path

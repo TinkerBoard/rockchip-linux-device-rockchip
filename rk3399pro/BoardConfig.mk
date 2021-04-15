@@ -1,1 +1,1 @@
-BoardConfig-tinker_edge_r.mk
+BoardConfig-rk3399pro-tinker_edge_r.mk
