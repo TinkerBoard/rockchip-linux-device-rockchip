@@ -17,6 +17,12 @@ intf:pcm_i2s=on
 #intf:uart3=off
 #intf:uart4=off
 
+##### Tinker Power Management #####
+
+governor=ondemand
+a17_minfreq=126000
+a17_maxfreq=1800000
+
 ##### List of device tree overlays to load. Format: overlay=<dtbo name, no extension> <dtbo2> ... #####
 
 ## Note: Put dtbo files under the overlays folder. ##
