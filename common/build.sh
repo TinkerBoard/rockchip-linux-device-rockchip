@@ -15,8 +15,11 @@ if [ "${VERSION}" == "debug" ]; then
 fi
 echo "VERSION_NUMBER: $VERSION_NUMBER"
 
-RELEASE_NAME="Tinker_Edge_R-Debian-Buster-${VERSION_NUMBER}"
+PROJECT_NAME="Tinker_Edge_R-Debian-Buster"
+RELEASE_NAME="${PROJECT_NAME}-${VERSION_NUMBER}"
+RECOVERY_RELEASE_NAME="${RELEASE_NAME}-Recovery"
 echo "RELEASE_NAME: ${RELEASE_NAME}"
+echo "RECOVERY_RELEASE_NAME: ${RECOVERY_RELEASE_NAME}"
 
 export LC_ALL=C
 unset RK_CFG_TOOLCHAIN
@@ -625,6 +628,7 @@ function build_updateimg(){
 
   # Build the SD boot format image
   sudo $TOP_DIR/rkbin/scripts/sdboot.sh
+  sudo $TOP_DIR/rkbin/scripts/sdboot.sh -t uboot
 
 	finish_build
 }
@@ -669,11 +673,15 @@ function build_save(){
 
   if [ "$VERSION" == "release" ]; then
     mv $STUB_PATH/IMAGES/sdcard_full.img $STUB_PATH/$RELEASE_NAME.img
+    mv $STUB_PATH/IMAGES/sdcard_uboot.img $STUB_PATH/$RECOVERY_RELEASE_NAME.img
     cd $STUB_PATH
     zip $RELEASE_NAME.zip $RELEASE_NAME.img
+    zip $RECOVERY_RELEASE_NAME.zip $RECOVERY_RELEASE_NAME.img
     sha256sum $RELEASE_NAME.zip > $RELEASE_NAME.zip.sha256sum
+    sha256sum $RECOVERY_RELEASE_NAME.zip > $RECOVERY_RELEASE_NAME.zip.sha256sum
     cd -
     rm -rf $STUB_PATH/$RELEASE_NAME.img
+    rm -rf $STUB_PATH/$RECOVERY_RELEASE_NAME.img
   fi
 
 	#Save build command info
