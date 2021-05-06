@@ -167,12 +167,11 @@ function usage()
 	echo "kernel             -build kernel"
 	echo "modules            -build kernel modules"
 	echo "toolchain          -build toolchain"
-	echo "rootfs             -build default rootfs, currently build debian9 as default"
+	echo "rootfs             -build default rootfs, currently build buildroot as default"
 	echo "buildroot          -build buildroot rootfs"
 	echo "ramboot            -build ramboot image"
 	echo "multi-npu_boot     -build boot image for multi-npu board"
 	echo "yocto              -build yocto rootfs"
-	echo "debian_base        -build base debian system"
 	echo "debian             -build debian9 stretch rootfs"
 	echo "distro             -build debian10 buster rootfs"
 	echo "pcba               -build pcba"
@@ -465,21 +464,21 @@ function build_rootfs(){
 			build_yocto
 			ln -rsf yocto/build/latest/rootfs.img $RK_ROOTFS_DIR/rootfs.ext4
 			;;
+		debian)
+			build_debian
+			ln -rsf debian/linaro-rootfs.img $RK_ROOTFS_DIR/rootfs.ext4
+			;;
 		distro)
 			build_distro
 			for f in $(ls distro/output/images/rootfs.*);do
 				ln -rsf $f* $RK_ROOTFS_DIR/
 			done
 			;;
-                buildroot)
+		*)
 			build_buildroot
 			for f in $(ls buildroot/output/$RK_CFG_BUILDROOT/images/rootfs.*);do
 				ln -rsf $f* $RK_ROOTFS_DIR/
 			done
-			;;
-		*)
-			build_debian
-			ln -rsf debian/linaro-rootfs.img $RK_ROOTFS_DIR/rootfs.ext4
 			;;
 	esac
 
@@ -489,28 +488,6 @@ function build_rootfs(){
 	fi
 
 	ln -rsf $RK_ROOTFS_DIR/$ROOTFS_IMG $RK_ROOTFS_IMG
-}
-
-function build_debian_base(){
-        # build debian base
-        echo "===========Start build debian base==========="
-        echo "TARGET_ARCH=$RK_ARCH"
-        echo "========================================"
-
-	if [ "$RK_ARCH" == "arm" ]; then
-                ARCH=armhf
-        fi
-        if [ "$RK_ARCH" == "arm64" ]; then
-                ARCH=arm64
-        fi
-
-	cd $TOP_DIR/debian && RELEASE=stretch TARGET=desktop ARCH=$ARCH ./mk-base-debian.sh && cd -
-        if [ $? -eq 0 ]; then
-                echo "====Build debian base ok!===="
-        else
-                echo "====Build debian base failed!===="
-                exit 1
-        fi
 }
 
 function build_recovery(){
@@ -573,7 +550,7 @@ function build_all(){
 	build_loader
 	build_kernel
 	build_toolchain && \
-	build_rootfs ${RK_ROOTFS_SYSTEM:-debian}
+	build_rootfs ${RK_ROOTFS_SYSTEM:-buildroot}
 	build_recovery
 	build_ramboot
 }
@@ -676,17 +653,6 @@ function build_save(){
 	cp $TOP_DIR/kernel/vmlinux $STUB_PATCH_PATH/kernel
 	mkdir -p $STUB_PATH/IMAGES/
 	cp $IMAGE_PATH/* $STUB_PATH/IMAGES/
-
-	if [ "$VERSION" == "release" ]; then
-		mkdir mkdir -p $STUB_PATH/$RELEASE_NAME
-		mv $STUB_PATH/IMAGES/update.img $STUB_PATH/$RELEASE_NAME/.
-		cp -rp $TOP_DIR/device/rockchip/tinker_edge_r/flash/. $STUB_PATH/$RELEASE_NAME
-		cd $STUB_PATH
-		zip -r $RELEASE_NAME.zip $RELEASE_NAME
-		sha256sum $RELEASE_NAME.zip > $RELEASE_NAME.zip.sha256sum
-		cd -
-		rm -rf $STUB_PATH/$RELEASE_NAME
-	fi
 
 	#Save build command info
 	echo "UBOOT:  defconfig: $RK_UBOOT_DEFCONFIG" >> $STUB_PATH/build_cmd_info

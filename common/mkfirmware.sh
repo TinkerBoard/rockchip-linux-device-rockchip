@@ -53,9 +53,11 @@ if [ ! -d "$TARGET_OUTPUT_DIR" ]; then
 	if [ "${RK_CFG_RAMBOOT}x" != "x" ];then
 		source $TOP_DIR/buildroot/build/envsetup.sh $RK_CFG_RAMBOOT
 	fi
-	if [ "${RK_CFG_BUILDROOT}x" != "x" ];then
-		# Use recovey host tools since we do not build buildroot.
+	# Use recovery host tools since we do not build buildroot.
+	#if [ "${RK_CFG_BUILDROOT}x" != "x" ];then
 		#source $TOP_DIR/buildroot/build/envsetup.sh $RK_CFG_BUILDROOT
+	#fi
+	if [ "${RK_CFG_RECOVERY}x" != "x" ];then
 		source $TOP_DIR/buildroot/build/envsetup.sh $RK_CFG_RECOVERY
 	fi
 fi
