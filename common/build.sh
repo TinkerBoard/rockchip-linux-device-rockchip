@@ -1,22 +1,25 @@
 #!/bin/bash
 
-if [ ! $VERSION ]; then
-    VERSION="debug"
+if [ ! ${VERSION} ]; then
+  VERSION="debug"
 fi
-echo "VERSION: $VERSION"
+echo "VERSION: ${VERSION}"
 
-if [ ! $VERSION_NUMBER ]; then
-	VERSION_NUMBER="eng"-"$USER"-"$(date  +%Y%m%d)"
-	RELEASE_NAME=Tinker_Edge_R-Debian-Stretch-"$VERSION_NUMBER"
-else
-	VERSION_NUMBER="$VERSION_NUMBER"-"$(date  +%Y%m%d)"
-	RELEASE_NAME=Tinker_Edge_R-Debian-Stretch-V"$VERSION_NUMBER"
+if [ ! ${VERSION_NUMBER} ]; then
+  VERSION_NUMBER="eng-${USER}"
+fi
+VERSION_NUMBER="${VERSION_NUMBER}-$(date +%Y%m%d)"
+
+if [ "${VERSION}" == "debug" ]; then
+  VERSION_NUMBER="${VERSION_NUMBER}-debug"
 fi
 echo "VERSION_NUMBER: $VERSION_NUMBER"
 
-if [ "$VERSION" == "debug" ]; then
-	RELEASE_NAME="$RELEASE_NAME"-Debug
-fi
+PROJECT_NAME="Tinker_Edge_R-Debian-Stretch"
+RELEASE_NAME="${PROJECT_NAME}-${VERSION_NUMBER}"
+RECOVERY_RELEASE_NAME="${RELEASE_NAME}-Recovery"
+echo "RELEASE_NAME: ${RELEASE_NAME}"
+echo "RECOVERY_RELEASE_NAME: ${RECOVERY_RELEASE_NAME}"
 
 export LC_ALL=C
 unset RK_CFG_TOOLCHAIN
@@ -424,7 +427,7 @@ function build_debian(){
 		RELEASE=stretch TARGET=desktop ARCH=$ARCH ./mk-base-debian.sh
 	fi
 
-	VERSION_NUMBER=$VERSION_NUMBER VERSION=$VERSION ARCH=$ARCH ./mk-rootfs-stretch.sh
+	VERSION=${VERSION} VERSION_NUMBER=${VERSION_NUMBER} ARCH=$ARCH ./mk-rootfs-stretch.sh
 
 	./mk-image.sh
 	cd ..
@@ -614,6 +617,10 @@ function build_updateimg(){
 			exit 1
 		fi
 	fi
+
+  # Build the SD boot format image
+  sudo $TOP_DIR/rkbin/scripts/sdboot.sh
+  sudo $TOP_DIR/rkbin/scripts/sdboot.sh -t uboot
 }
 
 function build_otapackage(){
@@ -636,23 +643,37 @@ function build_otapackage(){
 function build_save(){
 	IMAGE_PATH=$TOP_DIR/rockdev
 	#DATE=$(date  +%Y%m%d.%H%M)
-	STUB_PATH=IMAGE/"$RELEASE_NAME"
+	#STUB_PATH=Image/"$RK_KERNEL_DTS"_"$DATE"_RELEASE_TEST
 	#STUB_PATH="$(echo $STUB_PATH | tr '[:lower:]' '[:upper:]')"
+  STUB_PATH=IMAGE/"$RELEASE_NAME"
 	export STUB_PATH=$TOP_DIR/$STUB_PATH
 	export STUB_PATCH_PATH=$STUB_PATH/PATCHES
 	mkdir -p $STUB_PATH
 
 	#Generate patches
-	#$TOP_DIR/.repo/repo/repo forall -c "$TOP_DIR/device/rockchip/common/gen_patches_body.sh"
+	$TOP_DIR/.repo/repo/repo forall -c "$TOP_DIR/device/rockchip/common/gen_patches_body.sh"
 
 	#Copy stubs
-	#$TOP_DIR/.repo/repo/repo manifest -r -o $STUB_PATH/manifest_$(echo "$RK_KERNEL_DTS"_DEBIAN_"$VERSION_NUMBER"_"$VERSION" | tr '[:lower:]' '[:upper:]').xml
-	#$TOP_DIR/.repo/repo/repo manifest -r -o $STUB_PATH/manifest_$RELEASE_NAME.xml
+	#$TOP_DIR/.repo/repo/repo manifest -r -o $STUB_PATH/manifest_${DATE}.xml
+  $TOP_DIR/.repo/repo/repo manifest -r -o $STUB_PATH/manifest_$RELEASE_NAME.xml
 	mkdir -p $STUB_PATCH_PATH/kernel
 	cp $TOP_DIR/kernel/.config $STUB_PATCH_PATH/kernel
 	cp $TOP_DIR/kernel/vmlinux $STUB_PATCH_PATH/kernel
 	mkdir -p $STUB_PATH/IMAGES/
 	cp $IMAGE_PATH/* $STUB_PATH/IMAGES/
+
+  if [ "$VERSION" == "release" ]; then
+    mv $STUB_PATH/IMAGES/sdcard_full.img $STUB_PATH/$RELEASE_NAME.img
+    mv $STUB_PATH/IMAGES/sdcard_uboot.img $STUB_PATH/$RECOVERY_RELEASE_NAME.img
+    cd $STUB_PATH
+    zip $RELEASE_NAME.zip $RELEASE_NAME.img
+    zip $RECOVERY_RELEASE_NAME.zip $RECOVERY_RELEASE_NAME.img
+    sha256sum $RELEASE_NAME.zip > $RELEASE_NAME.zip.sha256sum
+    sha256sum $RECOVERY_RELEASE_NAME.zip > $RECOVERY_RELEASE_NAME.zip.sha256sum
+    cd -
+    rm -rf $STUB_PATH/$RELEASE_NAME.img
+    rm -rf $STUB_PATH/$RECOVERY_RELEASE_NAME.img
+  fi
 
 	#Save build command info
 	echo "UBOOT:  defconfig: $RK_UBOOT_DEFCONFIG" >> $STUB_PATH/build_cmd_info
