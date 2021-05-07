@@ -650,7 +650,7 @@ function build_otapackage(){
 
 function build_save(){
 	IMAGE_PATH=$TOP_DIR/rockdev
-	DATE=$(date  +%Y%m%d.%H%M)
+	#DATE=$(date  +%Y%m%d.%H%M)
 	#STUB_PATH=Image/"$RK_KERNEL_DTS"_"$DATE"_RELEASE_TEST
 	#STUB_PATH="$(echo $STUB_PATH | tr '[:lower:]' '[:upper:]')"
   STUB_PATH=IMAGE/"$RELEASE_NAME"
@@ -674,14 +674,10 @@ function build_save(){
   if [ "$VERSION" == "release" ]; then
     mv $STUB_PATH/IMAGES/sdcard_full.img $STUB_PATH/$RELEASE_NAME.img
     mv $STUB_PATH/IMAGES/sdcard_uboot.img $STUB_PATH/$RECOVERY_RELEASE_NAME.img
-    cd $STUB_PATH
-    zip $RELEASE_NAME.zip $RELEASE_NAME.img
-    zip $RECOVERY_RELEASE_NAME.zip $RECOVERY_RELEASE_NAME.img
-    sha256sum $RELEASE_NAME.zip > $RELEASE_NAME.zip.sha256sum
-    sha256sum $RECOVERY_RELEASE_NAME.zip > $RECOVERY_RELEASE_NAME.zip.sha256sum
-    cd -
-    rm -rf $STUB_PATH/$RELEASE_NAME.img
-    rm -rf $STUB_PATH/$RECOVERY_RELEASE_NAME.img
+    zip -j -m -T $STUB_PATH/$RELEASE_NAME.zip $STUB_PATH/$RELEASE_NAME.img
+    zip -j -m -T $STUB_PATH/$RECOVERY_RELEASE_NAME.zip $STUB_PATH/$RECOVERY_RELEASE_NAME.img
+    sha256sum $STUB_PATH/$RELEASE_NAME.zip > $STUB_PATH/$RELEASE_NAME.zip.sha256sum
+    sha256sum $STUB_PATH/$RECOVERY_RELEASE_NAME.zip > $STUB_PATH/$RECOVERY_RELEASE_NAME.zip.sha256sum
   fi
 
 	#Save build command info
