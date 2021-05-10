@@ -15,8 +15,11 @@ if [ "${VERSION}" == "debug" ]; then
 fi
 echo "VERSION_NUMBER: $VERSION_NUMBER"
 
-RELEASE_NAME="Tinker_Board-Debian-Buster-${VERSION_NUMBER}"
+PROJECT_NAME="Tinker_Board-Debian-Buster"
+RELEASE_NAME="${PROJECT_NAME}-${VERSION_NUMBER}"
+RECOVERY_RELEASE_NAME="${RELEASE_NAME}-Recovery"
 echo "RELEASE_NAME: ${RELEASE_NAME}"
+echo "RECOVERY_RELEASE_NAME: ${RECOVERY_RELEASE_NAME}"
 
 export LC_ALL=C
 unset RK_CFG_TOOLCHAIN
@@ -635,6 +638,7 @@ function build_updateimg(){
 
   # Build the SD boot format image
   sudo $TOP_DIR/rkbin/scripts/sdboot.sh
+  sudo $TOP_DIR/rkbin/scripts/sdboot.sh -t uboot
 
 	finish_build
 }
@@ -656,7 +660,7 @@ function build_otapackage(){
 
 function build_save(){
 	IMAGE_PATH=$TOP_DIR/rockdev
-	DATE=$(date  +%Y%m%d.%H%M)
+	#DATE=$(date  +%Y%m%d.%H%M)
 	#STUB_PATH=Image/"$RK_KERNEL_DTS"_"$DATE"_RELEASE_TEST
 	#STUB_PATH="$(echo $STUB_PATH | tr '[:lower:]' '[:upper:]')"
   STUB_PATH=IMAGE/"$RELEASE_NAME"
@@ -679,11 +683,11 @@ function build_save(){
 
   if [ "$VERSION" == "release" ]; then
     mv $STUB_PATH/IMAGES/sdcard_full.img $STUB_PATH/$RELEASE_NAME.img
-    cd $STUB_PATH
-    zip $RELEASE_NAME.zip $RELEASE_NAME.img
-    sha256sum $RELEASE_NAME.zip > $RELEASE_NAME.zip.sha256sum
-    cd -
-    rm -rf $STUB_PATH/$RELEASE_NAME.img
+    mv $STUB_PATH/IMAGES/sdcard_uboot.img $STUB_PATH/$RECOVERY_RELEASE_NAME.img
+    zip -j -m -T $STUB_PATH/$RELEASE_NAME.zip $STUB_PATH/$RELEASE_NAME.img
+    zip -j -m -T $STUB_PATH/$RECOVERY_RELEASE_NAME.zip $STUB_PATH/$RECOVERY_RELEASE_NAME.img
+    sha256sum $STUB_PATH/$RELEASE_NAME.zip > $STUB_PATH/$RELEASE_NAME.zip.sha256sum
+    sha256sum $STUB_PATH/$RECOVERY_RELEASE_NAME.zip > $STUB_PATH/$RECOVERY_RELEASE_NAME.zip.sha256sum
   fi
 
 	#Save build command info
