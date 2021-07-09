@@ -5,7 +5,7 @@ export RK_ARCH=arm
 # Uboot defconfig
 export RK_UBOOT_DEFCONFIG=tinker_board
 # Kernel defconfig
-export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
+export RK_KERNEL_DEFCONFIG=tinker_board_defconfig
 # Kernel dts
 export RK_KERNEL_DTS=rk3288-tinker-board
 # boot image type
