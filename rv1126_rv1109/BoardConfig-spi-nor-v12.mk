@@ -2,8 +2,8 @@
 
 # Target arch
 export RK_ARCH=arm
-# build firmware for spi nor
-export RK_BUILD_SPI_NOR=true
+# build idblock.bin and update SPL
+export RK_IDBLOCK_UPDATE_SPL=true
 # Uboot defconfig
 export RK_UBOOT_DEFCONFIG=rv1126-spi-nor-tiny
 # Loader update spl from Uboot
@@ -17,10 +17,11 @@ export RK_KERNEL_DEFCONFIG_FRAGMENT=rv1126-spi-nor.config
 # Kernel dts
 export RK_KERNEL_DTS=rv1126-evb-ddr3-v12-spi-nor
 # export RK_KERNEL_DTS=rv1126-38x38-v10-spi-nor
+export RK_KERNEL_FIT_ITS=boot.its
 # boot image type
 export RK_BOOT_IMG=zboot.img
 # kernel image path
-export RK_KERNEL_IMG=kernel/arch/arm/boot/Image
+export RK_KERNEL_IMG=kernel/arch/arm/boot/zImage
 # parameter for GPT table
 export RK_PARAMETER=parameter-spi-nor-32M.txt
 # Buildroot config
@@ -53,5 +54,5 @@ export RK_USERDATA_DIR=
 export RK_MISC=
 #choose enable distro module
 export RK_DISTRO_MODULE=
-# Define package-file for Firmware.img
-export RK_PACKAGE_FILE=setting-32M.ini
+# Define package-file for update.img
+export RK_PACKAGE_FILE=rv1126-package-file-spi-nor-tiny

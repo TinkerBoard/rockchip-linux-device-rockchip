@@ -5,12 +5,13 @@ export RK_CHIP=RV1126
 # Target arch
 export RK_ARCH=arm
 # Uboot defconfig
-#export RK_UBOOT_DEFCONFIG=rv1126
-export RK_UBOOT_DEFCONFIG=rv1126-ab
+export RK_UBOOT_DEFCONFIG=rv1126
+# Uboot defconfig fragment, config rk-sfc.config if sdcard upgrade, rv1126-ab.config for AB system bootup
+export RK_UBOOT_DEFCONFIG_FRAGMENT="rv1126-ab.config rk-sfc.config"
+# Uboot update loader (spl)
+export RK_LOADER_UPDATE_SPL=true
 # Uboot image format type: fit(flattened image tree)
 export RK_UBOOT_FORMAT_TYPE=fit
-#export RK_SPL_DEFCONFIG=rv1126
-export RK_SPL_DEFCONFIG=rv1126-ab
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rv1126_defconfig
 # Kernel defconfig fragment
@@ -51,21 +52,20 @@ export RK_OEM_DIR=
 #userdata config, if not define this, system will format by RK_USERDATA_FS_TYPE
 export RK_USERDATA_DIR=userdata_empty
 #
-# RK_UBI_PAGE_SIZE and RK_UBI_BLOCK_SIZE MUST be defined if meet One of the following conditions:
-#
-# 1. define RK_OEM_DIR and undefine RK_OEM_BUILDIN_BUILDROOT
-# 2. define RK_USERDATA_DIR
-#
 # Set ubifs page size, 2048(2KB) or 4096(4KB)
+# Option.
 export RK_UBI_PAGE_SIZE=2048
 #
 # Set ubifs block size, 0x20000(128KB) or 0x40000(256KB)
+# Option.
 export RK_UBI_BLOCK_SIZE=0x20000
 #
 # Set userdata partition size (byte) if define RK_USERDATA_DIR
+# MUST, if userdata partition is grow partition.
 export RK_USERDATA_PARTITION_SIZE=0x680000
 #
-# Set oem partition size (byte) if undefine RK_OEM_BUILDIN_BUILDROOT
+# Set oem partition size (byte)
+# Option. if not set, it will get from parameter auto.
 # export RK_OEM_PARTITION_SIZE=0x6400000
 #
 #misc image
@@ -74,7 +74,17 @@ export RK_MISC=
 export RK_DISTRO_MODULE=
 # Define pre-build script for this board
 export RK_BOARD_PRE_BUILD_SCRIPT=app-build.sh
-# Define package-file for update.img
-export RK_PACKAGE_FILE=rv1126-package-file-spi-nand
-#choose enable Linux A/B
-export RK_LINUX_AB_ENABLE=true
+# Define package-file for update_ab.img
+export RK_PACKAGE_FILE_AB=rv1126-package-file-spi-nand-uvc-ab
+# Define package-file for update_ota.img
+export RK_PACKAGE_FILE_OTA=rv1126-package-file-spi-nand-uvc-ota
+
+##########################################################
+### enable build update_sdcard.img
+### Detail to see docs/Linux/Recovery/Rockchip_Developer_Guide_Linux_Upgrade_CN.pdf
+# export RK_UPDATE_SDCARD_ENABLE_FOR_AB=true
+### Recovery config
+# export RK_UPDATE_SDCARD_CFG_RECOVERY=
+### Recovery image format type: fit(flattened image tree)
+# export RK_RECOVERY_FIT_ITS=boot4recovery.its
+##########################################################

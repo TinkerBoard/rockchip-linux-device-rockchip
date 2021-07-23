@@ -9,7 +9,7 @@ export RK_UBOOT_FORMAT_TYPE=fit
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
 # Kernel defconfig fragment
-export RK_KERNEL_DEFCONFIG_FRAGMENT=rockchip_linux_bifrost.config
+export RK_KERNEL_DEFCONFIG_FRAGMENT=
 # Kernel dts
 export RK_KERNEL_DTS=rk3568-evb1-ddr4-v10-linux
 # boot image type
@@ -21,7 +21,7 @@ export RK_KERNEL_FIT_ITS=boot.its
 # parameter for GPT table
 export RK_PARAMETER=parameter-buildroot-fit.txt
 # Buildroot config
-export RK_CFG_BUILDROOT=rockchip_rk356x
+export RK_CFG_BUILDROOT=rockchip_rk3568
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_rk356x_recovery
 # Recovery image format type: fit(flattened image tree)

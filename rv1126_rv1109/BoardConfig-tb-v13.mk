@@ -6,6 +6,8 @@ export RK_ARCH=arm
 export RK_UBOOT_DEFCONFIG=rv1126-emmc-tb
 # Uboot image format type: fit(flattened image tree)
 export RK_UBOOT_FORMAT_TYPE=fit
+# Loader update spl from Uboot
+export RK_LOADER_UPDATE_SPL=true
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rv1126_defconfig
 # kernel defconfig fragment
@@ -33,11 +35,13 @@ export RK_TARGET_PRODUCT=rv1126_rv1109
 # Set ramboot image type
 export RK_RAMBOOT_TYPE=ROMFS
 # Set oem partition type, including ext2 squashfs
-export RK_OEM_FS_TYPE=
+export RK_OEM_FS_TYPE=ext2
 # Set userdata partition type, including ext2, fat
 export RK_USERDATA_FS_TYPE=ext2
 #OEM config
-export RK_OEM_DIR=
+export RK_OEM_DIR=oem_empty
+# OEM build on buildroot
+export RK_OEM_BUILDIN_BUILDROOT=YES
 #userdata config, if not define this, system will format by RK_USERDATA_FS_TYPE
 export RK_USERDATA_DIR=userdata_empty
 #misc image

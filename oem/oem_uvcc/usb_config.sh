@@ -1,6 +1,7 @@
 #!/bin/sh
 
 ADB_EN=on
+DFU_EN=off
 if ( echo $2 |grep -q "off" ); then
 ADB_EN=off
 fi
@@ -11,67 +12,72 @@ configure_uvc_resolution_yuyv()
 {
     UVC_DISPLAY_W=$1
     UVC_DISPLAY_H=$2
-    mkdir ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/uncompressed/u/${UVC_DISPLAY_H}p
-    echo $UVC_DISPLAY_W > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/uncompressed/u/${UVC_DISPLAY_H}p/wWidth
-    echo $UVC_DISPLAY_H > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/uncompressed/u/${UVC_DISPLAY_H}p/wHeight
-    echo 333333 > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/uncompressed/u/${UVC_DISPLAY_H}p/dwDefaultFrameInterval
-    echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*20)) > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/uncompressed/u/${UVC_DISPLAY_H}p/dwMinBitRate
-    echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*20)) > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/uncompressed/u/${UVC_DISPLAY_H}p/dwMaxBitRate
-    echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*2)) > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/uncompressed/u/${UVC_DISPLAY_H}p/dwMaxVideoFrameBufferSize
-    echo -e "333333\n666666\n1000000\n2000000" > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/uncompressed/u/${UVC_DISPLAY_H}p/dwFrameInterval
+    UVC_DISPLAY_DIR=${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/uncompressed/u/${UVC_DISPLAY_W}_${UVC_DISPLAY_H}p
+    mkdir ${UVC_DISPLAY_DIR}
+    echo $UVC_DISPLAY_W > ${UVC_DISPLAY_DIR}/wWidth
+    echo $UVC_DISPLAY_H > ${UVC_DISPLAY_DIR}/wHeight
+    echo 333333 > ${UVC_DISPLAY_DIR}/dwDefaultFrameInterval
+    echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*20)) > ${UVC_DISPLAY_DIR}/dwMinBitRate
+    echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*20)) > ${UVC_DISPLAY_DIR}/dwMaxBitRate
+    echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*2)) > ${UVC_DISPLAY_DIR}/dwMaxVideoFrameBufferSize
+    echo -e "333333\n666666\n1000000\n2000000" > ${UVC_DISPLAY_DIR}/dwFrameInterval
 }
 
 configure_uvc_resolution_yuyv_720p()
 {
     UVC_DISPLAY_W=$1
     UVC_DISPLAY_H=$2
-    mkdir ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/uncompressed/u/${UVC_DISPLAY_H}p
-    echo $UVC_DISPLAY_W > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/uncompressed/u/${UVC_DISPLAY_H}p/wWidth
-    echo $UVC_DISPLAY_H > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/uncompressed/u/${UVC_DISPLAY_H}p/wHeight
-    echo 1000000 > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/uncompressed/u/${UVC_DISPLAY_H}p/dwDefaultFrameInterval
-    echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*20)) > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/uncompressed/u/${UVC_DISPLAY_H}p/dwMinBitRate
-    echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*20)) > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/uncompressed/u/${UVC_DISPLAY_H}p/dwMaxBitRate
-    echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*2)) > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/uncompressed/u/${UVC_DISPLAY_H}p/dwMaxVideoFrameBufferSize
-    echo -e "1000000\n2000000" > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/uncompressed/u/${UVC_DISPLAY_H}p/dwFrameInterval
+    UVC_DISPLAY_DIR=${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/uncompressed/u/${UVC_DISPLAY_W}_${UVC_DISPLAY_H}p
+    mkdir ${UVC_DISPLAY_DIR}
+    echo $UVC_DISPLAY_W > ${UVC_DISPLAY_DIR}/wWidth
+    echo $UVC_DISPLAY_H > ${UVC_DISPLAY_DIR}/wHeight
+    echo 1000000 > ${UVC_DISPLAY_DIR}/dwDefaultFrameInterval
+    echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*20)) > ${UVC_DISPLAY_DIR}/dwMinBitRate
+    echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*20)) > ${UVC_DISPLAY_DIR}/dwMaxBitRate
+    echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*2)) > ${UVC_DISPLAY_DIR}/dwMaxVideoFrameBufferSize
+    echo -e "1000000\n2000000" > ${UVC_DISPLAY_DIR}/dwFrameInterval
 }
 
 configure_uvc_resolution_mjpeg()
 {
     UVC_DISPLAY_W=$1
     UVC_DISPLAY_H=$2
-    mkdir ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/mjpeg/m/${UVC_DISPLAY_H}p
-    echo $UVC_DISPLAY_W > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/mjpeg/m/${UVC_DISPLAY_H}p/wWidth
-    echo $UVC_DISPLAY_H > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/mjpeg/m/${UVC_DISPLAY_H}p/wHeight
-    echo 333333 > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/mjpeg/m/${UVC_DISPLAY_H}p/dwDefaultFrameInterval
-    echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*20)) > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/mjpeg/m/${UVC_DISPLAY_H}p/dwMinBitRate
-    echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*20)) > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/mjpeg/m/${UVC_DISPLAY_H}p/dwMaxBitRate
-    echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*2)) > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/mjpeg/m/${UVC_DISPLAY_H}p/dwMaxVideoFrameBufferSize
-    echo -e "333333\n666666\n1000000\n2000000" > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/mjpeg/m/${UVC_DISPLAY_H}p/dwFrameInterval
+    UVC_DISPLAY_DIR=${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/mjpeg/m/${UVC_DISPLAY_W}_${UVC_DISPLAY_H}p
+    mkdir ${UVC_DISPLAY_DIR}
+    echo $UVC_DISPLAY_W > ${UVC_DISPLAY_DIR}/wWidth
+    echo $UVC_DISPLAY_H > ${UVC_DISPLAY_DIR}/wHeight
+    echo 333333 > ${UVC_DISPLAY_DIR}/dwDefaultFrameInterval
+    echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*20)) > ${UVC_DISPLAY_DIR}/dwMinBitRate
+    echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*20)) > ${UVC_DISPLAY_DIR}/dwMaxBitRate
+    echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*2)) > ${UVC_DISPLAY_DIR}/dwMaxVideoFrameBufferSize
+    echo -e "333333\n666666\n1000000\n2000000" > ${UVC_DISPLAY_DIR}/dwFrameInterval
 }
 configure_uvc_resolution_h264()
 {
     UVC_DISPLAY_W=$1
     UVC_DISPLAY_H=$2
-	mkdir ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f1/${UVC_DISPLAY_H}p
-	echo $UVC_DISPLAY_W > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f1/${UVC_DISPLAY_H}p/wWidth
-	echo $UVC_DISPLAY_H > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f1/${UVC_DISPLAY_H}p/wHeight
-	echo 333333 > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f1/${UVC_DISPLAY_H}p/dwDefaultFrameInterval
-	echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*10)) > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f1/${UVC_DISPLAY_H}p/dwMinBitRate
-	echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*10)) > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f1/${UVC_DISPLAY_H}p/dwMaxBitRate
-	echo -e "333333\n400000\n500000\n666666\n1000000\n2000000" > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f1/${UVC_DISPLAY_H}p/dwFrameInterval
-        echo -ne \\x48\\x32\\x36\\x34\\x00\\x00\\x10\\x00\\x80\\x00\\x00\\xaa\\x00\\x38\\x9b\\x71 > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f1/guidFormat
+    UVC_DISPLAY_DIR=${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f1/${UVC_DISPLAY_W}_${UVC_DISPLAY_H}p
+    mkdir ${UVC_DISPLAY_DIR}
+    echo $UVC_DISPLAY_W > ${UVC_DISPLAY_DIR}/wWidth
+    echo $UVC_DISPLAY_H > ${UVC_DISPLAY_DIR}/wHeight
+    echo 333333 > ${UVC_DISPLAY_DIR}/dwDefaultFrameInterval
+    echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*10)) > ${UVC_DISPLAY_DIR}/dwMinBitRate
+    echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*10)) > ${UVC_DISPLAY_DIR}/dwMaxBitRate
+    echo -e "333333\n400000\n500000\n666666\n1000000\n2000000" > ${UVC_DISPLAY_DIR}/dwFrameInterval
+    echo -ne \\x48\\x32\\x36\\x34\\x00\\x00\\x10\\x00\\x80\\x00\\x00\\xaa\\x00\\x38\\x9b\\x71 > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f1/guidFormat
 }
 configure_uvc_resolution_h265()
 {
         UVC_DISPLAY_W=$1
         UVC_DISPLAY_H=$2
-        mkdir ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f2/${UVC_DISPLAY_H}p
-        echo $UVC_DISPLAY_W > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f2/${UVC_DISPLAY_H}p/wWidth
-        echo $UVC_DISPLAY_H > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f2/${UVC_DISPLAY_H}p/wHeight
-        echo 333333 > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f2/${UVC_DISPLAY_H}p/dwDefaultFrameInterval
-        echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*10)) > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f2/${UVC_DISPLAY_H}p/dwMinBitRate
-        echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*10)) > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f2/${UVC_DISPLAY_H}p/dwMaxBitRate
-        echo -e "333333\n400000\n500000" > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f2/${UVC_DISPLAY_H}p/dwFrameInterval
+        UVC_DISPLAY_DIR=${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f2/${UVC_DISPLAY_W}_${UVC_DISPLAY_H}p
+        mkdir ${UVC_DISPLAY_DIR}
+        echo $UVC_DISPLAY_W > ${UVC_DISPLAY_DIR}/wWidth
+        echo $UVC_DISPLAY_H > ${UVC_DISPLAY_DIR}/wHeight
+        echo 333333 > ${UVC_DISPLAY_DIR}/dwDefaultFrameInterval
+        echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*10)) > ${UVC_DISPLAY_DIR}/dwMinBitRate
+        echo $((UVC_DISPLAY_W*UVC_DISPLAY_H*10)) > ${UVC_DISPLAY_DIR}/dwMaxBitRate
+        echo -e "333333\n400000\n500000" > ${UVC_DISPLAY_DIR}/dwFrameInterval
         echo -ne \\x48\\x32\\x36\\x35\\x00\\x00\\x10\\x00\\x80\\x00\\x00\\xaa\\x00\\x38\\x9b\\x71 > ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/framebased/f2/guidFormat
 }
 uvc_device_config()
@@ -127,7 +133,7 @@ uvc_device_config()
   ln -s ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/header/h ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/class/hs/h
   ln -s ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/header/h ${USB_FUNCTIONS_DIR}/uvc.gs6/streaming/class/ss/h
 }
-uac_device_config()
+uac1_device_config()
 {
   UAC=$1
   mkdir ${USB_FUNCTIONS_DIR}/${UAC}.gs0
@@ -140,6 +146,23 @@ uac_device_config()
   echo 3 > ${UAC_GS0}/c_chmask
   echo 2 > ${UAC_GS0}/c_ssize
   echo 1 > ${UAC_GS0}/c_feature_unit
+  echo 8000,16000,44100,48000 > ${UAC_GS0}/c_srate
+
+  ln -s ${UAC_GS0} ${USB_CONFIGS_DIR}/f2
+}
+uac2_device_config()
+{
+  UAC=$1
+  mkdir ${USB_FUNCTIONS_DIR}/${UAC}.gs0
+  UAC_GS0=${USB_FUNCTIONS_DIR}/${UAC}.gs0
+  echo 3 > ${UAC_GS0}/p_chmask
+  echo 2 > ${UAC_GS0}/p_ssize
+  echo 0 > ${UAC_GS0}/p_feature_unit
+  echo 8000,16000,44100,48000 > ${UAC_GS0}/p_srate
+
+  echo 3 > ${UAC_GS0}/c_chmask
+  echo 2 > ${UAC_GS0}/c_ssize
+  echo 0 > ${UAC_GS0}/c_feature_unit
   echo 8000,16000,44100,48000 > ${UAC_GS0}/c_srate
 
   ln -s ${UAC_GS0} ${USB_CONFIGS_DIR}/f2
@@ -188,15 +211,16 @@ echo 0x0200 > /sys/kernel/config/usb_gadget/rockchip/bcdUSB
 echo 239 > /sys/kernel/config/usb_gadget/rockchip/bDeviceClass
 echo 2 > /sys/kernel/config/usb_gadget/rockchip/bDeviceSubClass
 echo 1 > /sys/kernel/config/usb_gadget/rockchip/bDeviceProtocol
-
-echo "2020" > /sys/kernel/config/usb_gadget/rockchip/strings/0x409/serialnumber
+SERIAL_NUM=`cat /proc/cpuinfo |grep Serial | awk -F ":" '{print $2}'`
+echo "serialnumber is $SERIAL_NUM"
+echo $SERIAL_NUM > /sys/kernel/config/usb_gadget/rockchip/strings/0x409/serialnumber
 echo "rockchip" > /sys/kernel/config/usb_gadget/rockchip/strings/0x409/manufacturer
 echo "UVC" > /sys/kernel/config/usb_gadget/rockchip/strings/0x409/product
 echo 0x1 > /sys/kernel/config/usb_gadget/rockchip/os_desc/b_vendor_code
 echo "MSFT100" > /sys/kernel/config/usb_gadget/rockchip/os_desc/qw_sign
 echo 500 > /sys/kernel/config/usb_gadget/rockchip/configs/b.1/MaxPower
 #ln -s /sys/kernel/config/usb_gadget/rockchip/configs/b.1 /sys/kernel/config/usb_gadget/rockchip/os_desc/b.1
-echo 0x0020 > /sys/kernel/config/usb_gadget/rockchip/idProduct
+echo 0x0016 > /sys/kernel/config/usb_gadget/rockchip/idProduct
 
 #uvc config init
 uvc_device_config
@@ -217,26 +241,28 @@ rndis)
    echo "config uvc and rndis..."
    ;;
 uac1)
-   uac_device_config uac1
+   uac1_device_config uac1
    echo "uvc_uac1" > ${USB_CONFIGS_DIR}/strings/0x409/configuration
    echo "config uvc and uac1..."
    ;;
 uac2)
-   uac_device_config uac2
+   uac2_device_config uac2
    echo "uvc_uac2" > ${USB_CONFIGS_DIR}/strings/0x409/configuration
    echo "config uvc and uac2..."
    ;;
 uac1_rndis)
-   uac_device_config uac1
+   #uac_device_config uac1
    mkdir /sys/kernel/config/usb_gadget/rockchip/functions/rndis.gs0
    ln -s ${USB_FUNCTIONS_DIR}/rndis.gs0 ${USB_CONFIGS_DIR}/f3
+   uac1_device_config uac1
    echo "uvc_uac1_rndis" > ${USB_CONFIGS_DIR}/strings/0x409/configuration
    echo "config uvc and uac1 rndis..."
    ;;
 uac2_rndis)
-   uac_device_config uac2
+   #uac_device_config uac2
    mkdir /sys/kernel/config/usb_gadget/rockchip/functions/rndis.gs0
    ln -s ${USB_FUNCTIONS_DIR}/rndis.gs0 ${USB_CONFIGS_DIR}/f3
+   uac2_device_config uac2
    echo "uvc_uac2_rndis" > ${USB_CONFIGS_DIR}/strings/0x409/configuration
    echo "config uvc and uac2 rndis..."
    ;;
@@ -246,6 +272,19 @@ uac2_rndis)
 esac
 
 ln -s ${USB_FUNCTIONS_DIR}/uvc.gs6 ${USB_CONFIGS_DIR}/f1
+
+if [ $DFU_EN = on ];then
+  mkdir /sys/kernel/config/usb_gadget/rockchip/functions/dfu.gs0
+  CONFIG_STR=`cat /sys/kernel/config/usb_gadget/rockchip/configs/b.1/strings/0x409/configuration`
+  STR=${CONFIG_STR}_dfu
+  echo $STR > ${USB_CONFIGS_DIR}/strings/0x409/configuration
+  USB_CNT=`echo $STR | awk -F"_" '{print NF-1}'`
+  let USB_CNT=USB_CNT+1
+  echo "dfu on++++++ ${USB_CNT}"
+  ln -s ${USB_FUNCTIONS_DIR}/dfu.gs0 ${USB_CONFIGS_DIR}/f${USB_CNT}
+  ADB_EN=off
+  sleep .5
+fi
 
 if [ $ADB_EN = on ];then
   mkdir ${USB_FUNCTIONS_DIR}/ffs.adb
@@ -257,7 +296,7 @@ if [ $ADB_EN = on ];then
   echo "adb on++++++ ${USB_CNT}"
   ln -s ${USB_FUNCTIONS_DIR}/ffs.adb ${USB_CONFIGS_DIR}/f${USB_CNT}
   pre_run_adb
-  sleep 1
+  sleep .5
 fi
 
 UDC=`ls /sys/class/udc/| awk '{print $1}'`

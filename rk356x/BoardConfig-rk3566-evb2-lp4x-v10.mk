@@ -3,13 +3,13 @@
 # Target arch
 export RK_ARCH=arm64
 # Uboot defconfig
-export RK_UBOOT_DEFCONFIG=rk3568
+export RK_UBOOT_DEFCONFIG=rk3566
 # Uboot image format type: fit(flattened image tree)
 export RK_UBOOT_FORMAT_TYPE=fit
 # Kernel defconfig
 export RK_KERNEL_DEFCONFIG=rockchip_linux_defconfig
 # Kernel defconfig fragment
-export RK_KERNEL_DEFCONFIG_FRAGMENT=rockchip_linux_bifrost.config
+export RK_KERNEL_DEFCONFIG_FRAGMENT=
 # Kernel dts
 export RK_KERNEL_DTS=rk3566-evb2-lp4x-v10-linux
 # boot image type
@@ -21,7 +21,7 @@ export RK_KERNEL_FIT_ITS=boot.its
 # parameter for GPT table
 export RK_PARAMETER=parameter-buildroot-fit.txt
 # Buildroot config
-export RK_CFG_BUILDROOT=rockchip_rk356x
+export RK_CFG_BUILDROOT=rockchip_rk3566
 # Recovery config
 export RK_CFG_RECOVERY=rockchip_rk356x_recovery
 # Recovery image format type: fit(flattened image tree)

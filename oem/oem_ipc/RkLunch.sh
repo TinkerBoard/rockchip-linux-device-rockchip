@@ -26,6 +26,10 @@ if [ ! -f "/oem/sysconfig.db" ]; then
   if [ $? -eq 0 ] ;then
     ln -s -f /oem/sysconfig-1080P.db /oem/sysconfig.db
   fi
+  media-ctl -p -d /dev/media1 | grep 2592x1944
+  if [ $? -eq 0 ] ;then
+    ln -s -f /oem/sysconfig-5M.db /oem/sysconfig.db
+  fi
 fi
 
 #set max socket buffer size to 1.5MByte
@@ -39,8 +43,14 @@ export enable_encoder_debug=0
 
 ipc-daemon --no-mediaserver &
 sleep 2
-ispserver &
-sleep 1
+QUICKDISPLAY=`busybox ps |grep -w startup_app_ipc |grep -v grep`
+if [ -z "$QUICKDISPLAY" ] ;then
+  echo "run ispserver"
+  ispserver &
+  sleep 1
+else
+  echo "ispserver is running"
+fi
 
 ls /sys/class/drm | grep "card0-"
 if [ $? -ne 0 ] ;then
@@ -67,11 +77,26 @@ else
   HasAudio=1
 fi
 
+# TODO:
+HasAudio=0
+
 if [ $HasDisplay -eq 1 ]; then
 	if [ $HasHDMI -eq 1 ]; then
 		mediaserver -c /oem/usr/share/mediaserver/rv1109/ipc-hdmi-display.conf &
 	else
-		mediaserver -c /oem/usr/share/mediaserver/rv1109/ipc-display.conf &
+		if [ -z "$QUICKDISPLAY" ]; then
+			if [ $HasAudio -eq 1 ]; then
+				mediaserver -c /oem/usr/share/mediaserver/rv1109/ipc-display.conf &
+			else
+				mediaserver -c /oem/usr/share/mediaserver/rv1109/ipc-display-without-audio.conf &
+			fi
+		else
+			if [ $HasAudio -eq 1 ]; then
+				mediaserver -c /oem/usr/share/mediaserver/rv1109/ipc.conf &
+			else
+				mediaserver -c /oem/usr/share/mediaserver/rv1109/ipc-without-audio.conf &
+			fi
+		fi
 	fi
 else
 	if [ $HasAudio -eq 1 ]; then
@@ -85,12 +110,17 @@ fi
 export MEDIA_DEV=/dev/block/by-name/media
 export FSTYPE=ext4
 
+if [ ! -L $MEDIA_DEV ]; then
+	echo "media part not exit, do nothing";
+	exit
+fi
+
 prepare_part()
 {
   dumpe2fs -h $MEDIA_DEV 2>/dev/null| grep "media"
   if [ $? -ne 0 ]; then
     echo "Auto formatting $MEDIA_DEV to $FSTYPE"
-    mke2fs -F -L media $MEDIA_DEV && tune2fs -c 0 -i 0 $MEDIA_DEV && prepare_part && return
+    mke2fs -F -L media $MEDIA_DEV && resize2fs $MEDIA_DEV && tune2fs -c 0 -i 0 $MEDIA_DEV && prepare_part && return
   fi
 }
 prepare_part

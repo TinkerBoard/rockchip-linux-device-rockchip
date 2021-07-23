@@ -35,7 +35,7 @@ export RK_JOBS=12
 # target chip
 export RK_TARGET_PRODUCT=rv1126_rv1109
 # Set rootfs type, including ext2 ext4 squashfs
-export RK_ROOTFS_TYPE=ext4
+export RK_ROOTFS_TYPE=squashfs
 # rootfs image path
 export RK_ROOTFS_IMG=rockdev/rootfs.${RK_ROOTFS_TYPE}
 # Set ramboot image type
@@ -56,3 +56,5 @@ export RK_MISC=wipe_all-misc.img
 export RK_DISTRO_MODULE=
 # Define pre-build script for this board
 export RK_BOARD_PRE_BUILD_SCRIPT=app-build.sh
+# Define package-file for update.img
+export RK_PACKAGE_FILE=rv1126_rv1109-package-file
