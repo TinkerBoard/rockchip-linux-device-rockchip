@@ -17,6 +17,12 @@ intf:pcm_i2s=on
 #intf:uart3=off
 #intf:uart4=off
 
+##### Driver Config #####
+
+## Note: auto_ums: Auto enable ums mode while power on with USB connected. ##
+
+conf:auto_ums=on
+
 ##### Tinker Power Management #####
 
 governor=ondemand
