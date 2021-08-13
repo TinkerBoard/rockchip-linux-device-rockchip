@@ -26,11 +26,15 @@ conf:auto_ums=on
 
 ##### Tinker Power Management #####
 
-governor=ondemand
+cpu_governor=ondemand
 a53_minfreq=408000
 a53_maxfreq=1416000
 a72_minfreq=408000
 a72_maxfreq=1800000
+
+gpu_governor=simple_ondemand
+t86x_minfreq=200000000
+t86x_maxfreq=800000000
 
 ##### List of device tree overlays to load. Format: overlay=<dtbo name, no extension> <dtbo2> ... #####
 
