@@ -24,6 +24,14 @@ intf:fiq_debugger=on
 conf:eth_wakeup=on
 conf:auto_ums=on
 
+##### Tinker Power Management #####
+
+governor=ondemand
+a53_minfreq=408000
+a53_maxfreq=1416000
+a72_minfreq=408000
+a72_maxfreq=1800000
+
 ##### List of device tree overlays to load. Format: overlay=<dtbo name, no extension> <dtbo2> ... #####
 
 ## Note: Put dtbo files under the overlays folder. ##
