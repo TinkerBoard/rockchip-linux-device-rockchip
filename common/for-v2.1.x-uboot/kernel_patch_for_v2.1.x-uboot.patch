@@ -1,0 +1,108 @@
+diff --git a/arch/arm/boot/dts/rk3288-linux.dtsi b/arch/arm/boot/dts/rk3288-linux.dtsi
+index 8e4025ca7651..37d0739432cd 100644
+--- a/arch/arm/boot/dts/rk3288-linux.dtsi
++++ b/arch/arm/boot/dts/rk3288-linux.dtsi
+@@ -7,10 +7,6 @@
+ #include "rk3288-dram-default-timing.dtsi"
+ 
+ / {
+-	chosen {
+-		bootargs = "earlyprintk console=ttyFIQ0 rw root=PARTUUID=614e0000-0000 rootfstype=ext4 rootwait";
+-	};
+-
+ 	/delete-node/ dmc@ff610000;
+ 
+ 	dfi: dfi {
+@@ -93,23 +89,6 @@
+ 		memory-region = <&ramoops_mem>;
+ 	};
+ 
+-	fiq_debugger: fiq-debugger {
+-		compatible = "rockchip,fiq-debugger";
+-		interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
+-		rockchip,serial-id = <2>;
+-		rockchip,wake-irq = <0>;
+-		/* If enable uart uses irq instead of fiq */
+-		rockchip,irq-mode-enable = <0>;
+-		rockchip,baudrate = <115200>;  /* Only 115200 and 1500000 */
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&uart2_xfer>;
+-	};
+-
+-	psci {
+-		compatible = "arm,psci-1.0";
+-		method = "smc";
+-	};
+-
+ 	display-subsystem {
+ 		status = "okay";
+ 
+@@ -165,31 +144,6 @@
+ 	};
+ };
+ 
+-&cpu0 {
+-	enable-method = "psci";
+-};
+-
+-&cpu1 {
+-	enable-method = "psci";
+-};
+-
+-&cpu2 {
+-	enable-method = "psci";
+-};
+-
+-&cpu3 {
+-	enable-method = "psci";
+-};
+-
+-&dmac_bus_s {
+-	/* change to non-secure dmac */
+-	reg = <0x0 0xff600000 0x0 0x4000>;
+-};
+-
+-&efuse {
+-	compatible = "rockchip,rk3288-secure-efuse";
+-};
+-
+ &rga {
+ 	compatible = "rockchip,rga2";
+ 	clocks = <&cru ACLK_RGA>, <&cru HCLK_RGA>, <&cru SCLK_RGA>;
+diff --git a/arch/arm/boot/dts/rk3288-tinker_board.dts b/arch/arm/boot/dts/rk3288-tinker_board.dts
+index 85cf8ffb975f..a0ae6a7898e5 100644
+--- a/arch/arm/boot/dts/rk3288-tinker_board.dts
++++ b/arch/arm/boot/dts/rk3288-tinker_board.dts
+@@ -1028,8 +1028,8 @@
+ 	};
+ };
+ 
+-&fiq_debugger {
++/*&fiq_debugger {
+ 	rockchip,serial-id = <3>;
+ 	pinctrl-0 = <&uart3_xfer>;
+ 	status = "disabled";
+-};
++};*/
+diff --git a/arch/arm/configs/tinker_board_defconfig b/arch/arm/configs/tinker_board_defconfig
+index c4811a1ee390..5c9488b11515 100644
+--- a/arch/arm/configs/tinker_board_defconfig
++++ b/arch/arm/configs/tinker_board_defconfig
+@@ -50,7 +50,7 @@ CONFIG_ARM_THUMBEE=y
+ CONFIG_ARM_KERNMEM_PERMS=y
+ # CONFIG_ARM_ERRATA_643719 is not set
+ CONFIG_SMP=y
+-CONFIG_ARM_PSCI=y
++CONFIG_ARM_PSCI=n
+ CONFIG_PREEMPT_VOLUNTARY=y
+ CONFIG_AEABI=y
+ CONFIG_HIGHMEM=y
+@@ -796,7 +796,7 @@ CONFIG_COMMON_CLK_RK808=y
+ CONFIG_ROCKCHIP_IOMMU=y
+ CONFIG_ROCKCHIP_PM_DOMAINS=y
+ CONFIG_ROCKCHIP_PVTM=y
+-CONFIG_ROCKCHIP_SUSPEND_MODE=y
++CONFIG_ROCKCHIP_SUSPEND_MODE=n
+ CONFIG_PM_DEVFREQ=y
+ CONFIG_DEVFREQ_GOV_PERFORMANCE=y
+ CONFIG_DEVFREQ_GOV_POWERSAVE=y
