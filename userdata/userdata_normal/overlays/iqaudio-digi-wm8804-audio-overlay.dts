@@ -1,0 +1,50 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "rockchip,rk3288";
+
+	fragment@0 {
+		target-path ="/sound-simple-card";
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	fragment@1 {
+		target = <&i2c1>;
+		__overlay__ {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			status = "okay";
+
+			wm8804@3b {
+				#sound-dai-cells = <0>;
+				compatible = "wlf,wm8804";
+				reg = <0x3b>;
+				status = "okay";
+				DVDD-supply = <&vdd_3v3_reg>;
+				PVDD-supply = <&vdd_3v3_reg>;
+			};
+		};
+	};
+
+	fragment@2 {
+		target-path = "/sound-ext-card";
+		__overlay__ {
+			compatible = "iqaudio,wm8804-digi";
+			i2s-controller = <&i2s>;
+			card_name = "wm8804-digi,card-name";
+			dai_name = "wm8804-digi,dai-name";
+			dai_stream_name = "wm8804-digi,dai-stream-name";
+			status = "okay";
+		};
+	};
+
+	fragment@3 {
+		target = <&hdmi>;
+		__overlay__ {
+			hdmi-i2s-audio-disable;
+		};
+	};
+};
