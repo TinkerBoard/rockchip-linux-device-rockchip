@@ -5,10 +5,10 @@
 ## Note: uart2 is the same pins to pwm2 and pwm3. Set the latter one while both on. ##
 
 intf:fiq_debugger=on
-#intf:i2c1=off
-#intf:i2c4=off
-#intf:spi0=off
-#intf:spi2=off
+intf:i2c1=on
+intf:i2c4=on
+intf:spi0=on
+intf:spi2=on
 #intf:pwm2=off
 #intf:pwm3=off
 intf:pcm_i2s=on
