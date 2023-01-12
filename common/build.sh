@@ -451,7 +451,7 @@ function build_check_cross_compile(){
 	case $RK_ARCH in
 	arm|armhf)
 		if [ -d "$TOP_DIR/prebuilts/gcc/linux-x86/arm/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf" ]; then
-			CROSS_COMPILE=$(realpath $TOP_DIR)/prebuilts/gcc/linux-x86/arm/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf/bin/arm-linux-gnueabihf-
+			CROSS_COMPILE=$(realpath $TOP_DIR)/prebuilts/gcc/linux-x86/arm/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf/bin/arm-none-linux-gnueabihf-
 		export CROSS_COMPILE=$CROSS_COMPILE
 		fi
 		;;
@@ -1173,7 +1173,7 @@ function build_save(){
 		"$TOP_DIR/device/rockchip/common/gen_patches_body.sh"
 
 	#Copy stubs
-	.repo/repo/repo manifest -r -o $STUB_PATH/manifest_${DATE}.xml
+	yes | .repo/repo/repo manifest -r -o $STUB_PATH/manifest_${DATE}.xml
 	mkdir -p $STUB_PATCH_PATH/kernel
 	cp kernel/.config $STUB_PATCH_PATH/kernel
 	cp kernel/vmlinux $STUB_PATCH_PATH/kernel
@@ -1204,10 +1204,7 @@ function create_keys() {
 	test -d u-boot/keys && echo "ERROR: u-boot/keys has existed" && return -1
 
 	mkdir u-boot/keys -p
-	cd u-boot/keys
-	$TOP_DIR/rkbin/tools/rk_sign_tool kk --bits 2048
-	cd -
-
+	./rkbin/tools/rk_sign_tool kk --bits 2048 --out u-boot/keys
 	ln -s private_key.pem u-boot/keys/dev.key
 	ln -s public_key.pem u-boot/keys/dev.pubkey
 	openssl req -batch -new -x509 -key u-boot/keys/dev.key -out u-boot/keys/dev.crt
