@@ -886,8 +886,8 @@ function build_recovery(){
 
 	check_config RK_CFG_RECOVERY || return 0
 
-	rm buildroot/output/$RK_CFG_RECOVERY/.config*
-	rm buildroot/output/$RK_CFG_RECOVERY/.rockchipconfig
+	rm -f buildroot/output/$RK_CFG_RECOVERY/.config*
+	rm -f buildroot/output/$RK_CFG_RECOVERY/.rockchipconfig
 
 	echo "==========Start building recovery=========="
 	echo "TARGET_RECOVERY_CONFIG=$RK_CFG_RECOVERY"
@@ -1090,8 +1090,8 @@ function build_cleanall(){
 }
 
 function build_firmware(){
-	rm buildroot/output/$RK_CFG_BUILDROOT/.config*
-	rm buildroot/output/$RK_CFG_BUILDROOT/.rockchipconfig
+	rm -f buildroot/output/$RK_CFG_BUILDROOT/.config*
+	rm -f buildroot/output/$RK_CFG_BUILDROOT/.rockchipconfig
 
 	./mkfirmware.sh $BOARD_CONFIG
 
