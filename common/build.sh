@@ -426,8 +426,17 @@ function build_debian(){
 	esac
 
 	cd debian
-	[ ! -e linaro-buster-alip-*.tar.gz ] && \
+
+  ROOTFS_BASE_DIR="../rootfs-base"
+
+  if [ ! -e $ROOTFS_BASE_DIR ]; then
+    ROOTFS_BASE_DIR="."
+  fi
+
+	if [ ! -e linaro-buster-$ARCH.tar.gz ]; then
 		RELEASE=buster TARGET=desktop ARCH=$ARCH ./mk-base-debian.sh
+		ln -rsf $ROOTFS_BASE_DIR/linaro-buster-alip-*.tar.gz linaro-buster-$ARCH.tar.gz
+	fi
 
 	VERSION=${VERSION} VERSION_NUMBER=${VERSION_NUMBER} ARCH=$ARCH ./mk-rootfs-buster.sh
 	./mk-image.sh
