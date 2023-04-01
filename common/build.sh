@@ -422,9 +422,16 @@ function build_debian(){
 		ARCH=arm64
 	fi
 
-	if [ ! -e linaro-stretch-alip-*.tar.gz ]; then
+  ROOTFS_BASE_DIR="../rootfs-base"
+
+  if [ ! -e $ROOTFS_BASE_DIR ]; then
+    ROOTFS_BASE_DIR="."
+  fi
+
+	if [ ! -e linaro-strech-$ARCH.tar.gz ]; then
 		echo "\033[36m Run mk-base-debian.sh first \033[0m"
 		RELEASE=stretch TARGET=desktop ARCH=$ARCH ./mk-base-debian.sh
+		ln -rsf $ROOTFS_BASE_DIR/linaro-stretch-alip-*.tar.gz linaro-stretch-$ARCH.tar.gz
 	fi
 
 	VERSION=${VERSION} VERSION_NUMBER=${VERSION_NUMBER} ARCH=$ARCH ./mk-rootfs-stretch.sh
