@@ -111,7 +111,7 @@ build_debian()
 			linaro-$RK_DEBIAN_VERSION-$ARCH.tar.gz
 	fi
 
-	VERSION=debug ARCH=$ARCH ./mk-rootfs-$RK_DEBIAN_VERSION.sh
+	VERSION=$VERSION ARCH=$ARCH ./mk-rootfs-$RK_DEBIAN_VERSION.sh
 	./mk-image.sh
 
 	ln -rsf "$PWD/linaro-rootfs.img" $ROOTFS_DIR/rootfs.ext4

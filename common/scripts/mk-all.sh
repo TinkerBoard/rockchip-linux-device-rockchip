@@ -4,6 +4,7 @@ BOARD=$(echo ${RK_KERNEL_DTS_NAME:-$(echo "$RK_DEFCONFIG" | \
 	sed -n "s/.*\($RK_CHIP.*\)_defconfig/\1/p")} | \
 	tr '[:lower:]' '[:upper:]')
 
+
 build_all()
 {
 	echo "=========================================="
@@ -43,14 +44,20 @@ build_save()
 	echo "=========================================="
 
 	shift
-	SAVE_BASE_DIR="$RK_OUTDIR/$BOARD${1:+/$1}"
-	case "$(grep "^ID=" "$RK_OUTDIR/os-release" 2>/dev/null)" in
-		ID=buildroot) SAVE_DIR="$SAVE_BASE_DIR/BUILDROOT" ;;
-		ID=debian) SAVE_DIR="$SAVE_BASE_DIR/DEBIAN" ;;
-		ID=poky) SAVE_DIR="$SAVE_BASE_DIR/YOCTO" ;;
-		*) SAVE_DIR="$SAVE_BASE_DIR" ;;
-	esac
-	[ "$1" ] || SAVE_DIR="$SAVE_DIR/$(date  +%Y%m%d_%H%M%S)"
+	#SAVE_BASE_DIR="$RK_OUTDIR/$BOARD${1:+/$1}"
+	#echo "$SAVE_BASE_DIR"
+	#case "$(grep "^ID=" "$RK_OUTDIR/os-release" 2>/dev/null)" in
+	#	ID=buildroot) SAVE_DIR="$SAVE_BASE_DIR/BUILDROOT" ;;
+	#	ID=debian) SAVE_DIR="$SAVE_BASE_DIR/DEBIAN" ;;
+	#	ID=poky) SAVE_DIR="$SAVE_BASE_DIR/YOCTO" ;;
+	#	*) SAVE_DIR="$SAVE_BASE_DIR" ;;
+	#esac
+
+	#[ "$1" ] || SAVE_DIR="$SAVE_DIR/$(date  +%Y%m%d_%H%M%S)"
+
+	SAVE_BASE_DIR=$SDK_DIR/IMAGE
+	SAVE_DIR=$SAVE_BASE_DIR/$RELEASE_NAME
+
 	mkdir -p "$SAVE_DIR"
 	rm -rf "$SAVE_BASE_DIR/latest"
 	ln -rsf "$SAVE_DIR" "$SAVE_BASE_DIR/latest"

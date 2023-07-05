@@ -290,12 +290,53 @@ main()
 	export RK_CONFIG="$RK_OUTDIR/.config"
 	export RK_DEFCONFIG_LINK="$RK_OUTDIR/defconfig"
 
+	if [ ! $VERSION ]; then
+  		export VERSION="debug"
+	fi
+	echo $VERSION
+
+
+	if [ ! $VERSION_NUMBER ]; then
+  		VERSION_NUMBER="eng-$USER"
+	fi
+	VERSION_NUMBER="$VERSION_NUMBER-$(date +%Y%m%d)"
+
+	if [ "$VERSION" == "debug" ]; then
+  		VERSION_NUMBER="$VERSION_NUMBER-debug"
+	elif [ "$VERSION" == "factory" ]; then
+  		VERSION_NUMBER="$VERSION_NUMBER-factory"
+	elif [ "$VERSION" == "release" ]; then
+  		VERSION_NUMBER="$VERSION_NUMBER-release"
+	fi
+
+	load_config RK_ROOTFS_SYSTEM
+
+	if [ "$RK_ROOTFS_SYSTEM" = "debian" ];then
+		PROJECT_NAME="Tinker_Board_3N-Debian-Bullseye"
+	elif [ "$RK_ROOTFS_SYSTEM" = "yocto" ];then
+		PROJECT_NAME="Tinker_Board_3N-Yocto-Kirkstone"
+		export IMAGE_VERSION="$VERSION_NUMBER"_"$VERSION"
+	fi
+	#echo "VERSION_NUMBER: $VERSION_NUMBER"
+
+	export RELEASE_NAME="$PROJECT_NAME-$VERSION_NUMBER"
+	export RECOVERY_RELEASE_NAME="$RELEASE_NAME-Recovery"
+	export SPINOR_RECOVERY_RELEASE_NAME="SPINOR-$RELEASE_NAME-Recovery"
+	#echo "RELEASE_NAME: $RELEASE_NAME"
+	#echo "RECOVERY_RELEASE_NAME: $RECOVERY_RELEASE_NAME"
+	#echo "SPINOR_RECOVERY_RELEASE_NAME: $SPINOR_RECOVERY_RELEASE_NAME"
+
 	# For Makefile
 	case "$@" in
 		make-targets | make-usage)
 			run_build_hooks "$@"
 			exit 0 ;;
 	esac
+
+	echo "VERSION_NUMBER: $VERSION_NUMBER"
+        echo "RELEASE_NAME: $RELEASE_NAME"
+        echo "RECOVERY_RELEASE_NAME: $RECOVERY_RELEASE_NAME"
+        echo "SPINOR_RECOVERY_RELEASE_NAME: $SPINOR_RECOVERY_RELEASE_NAME"
 
 	if [ ! -d "$RK_LOG_DIR" ]; then
 		mkdir -p "$RK_LOG_DIR"
@@ -304,6 +345,7 @@ main()
 		echo -e "\e[33mLog saved at $RK_LOG_DIR\e[0m"
 		echo
 	fi
+
 
 	# Drop old logs
 	cd "$RK_LOG_BASE_DIR"
