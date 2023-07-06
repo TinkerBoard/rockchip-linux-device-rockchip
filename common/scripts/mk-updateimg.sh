@@ -44,6 +44,9 @@ build_updateimg()
 	TARGET="${1:-$RK_FIRMWARE_DIR/update.img}"
 	TYPE="${2:-update}"
 	PKG_FILE="${3:-$RK_PACKAGE_FILE}"
+	PKG_UBOOT_FILE="${4:-$RK_PACKAGE_UBOOT_FILE}"
+	TARGET_UBOOT="${5:-$RK_FIRMWARE_DIR/update_uboot.img}"
+	PARAMETER_UBOOT_FILE="${6:-$RK_PARAMETER_UBOOT}"
 	OUT_DIR="$RK_OUTDIR/$TYPE"
 	IMAGE_DIR="$OUT_DIR/Image"
 
@@ -64,6 +67,47 @@ build_updateimg()
 		# Not packing rootfs partition for sdcard
 		rm -f rootfs.img
 	fi
+
+        # Prepare package-file
+        if [ "$PKG_UBOOT_FILE" ]; then
+                PKG_UBOOT_FILE="$CHIP_DIR/$PKG_UBOOT_FILE"
+                if [ ! -r "$PKG_UBOOT_FILE" ]; then
+                        echo "$PKG_UBOOT_FILE not exists!"
+                        exit 1
+                fi
+                ln -rsf "$PKG_UBOOT_FILE" package-file
+		mv  parameter.txt parameter.txt_full
+		cp -arp "$CHIP_DIR/$PARAMETER_UBOOT_FILE" parameter.txt
+	fi
+
+        echo "Packing $TARGET_UBOOT for $TYPE..."
+
+        if [ ! -r MiniLoaderAll.bin ]; then
+                echo -e "\e[31mMiniLoaderAll.bin is missing\e[0m"
+                exit 1
+        fi
+
+        TAG=RK$(hexdump -s 21 -n 4 -e '4 "%c"' MiniLoaderAll.bin | rev)
+        "$RK_PACK_TOOL_DIR/afptool" -pack ./ update.raw.img
+        "$RK_PACK_TOOL_DIR/rkImageMaker" -$TAG MiniLoaderAll.bin \
+                update.raw.img update.img -os_type:androidos
+
+	rm -rf $IMAGE_DIR/update_uboot.img
+	cp -arp $IMAGE_DIR/update.img $IMAGE_DIR/update_uboot.img
+	rm -rf $IMAGE_DIR/update.img
+
+        ln -rsf "$IMAGE_DIR/update_uboot.img" "$OUT_DIR"
+        ln -rsf "$IMAGE_DIR/update_uboot.img" "$TARGET_UBOOT"
+
+        # Build the SD uboot boot format image
+        $SDK_DIR/rkbin/scripts/sdboot.sh -t uboot -d sdcard
+
+        # Build the spi nor flash uboot boot format image
+        $SDK_DIR/rkbin/scripts/sdboot.sh -t uboot -d spinor
+
+	rm -rf package-file
+	rm -rf parameter.txt
+	mv parameter.txt_full parameter.txt
 
 	# Prepare package-file
 	if [ "$PKG_FILE" ]; then
@@ -94,6 +138,8 @@ build_updateimg()
 	ln -rsf "$IMAGE_DIR/package-file" "$OUT_DIR"
 	ln -rsf "$IMAGE_DIR/update.img" "$OUT_DIR"
 	ln -rsf "$IMAGE_DIR/update.img" "$TARGET"
+
+	$SDK_DIR/rkbin/scripts/sdboot.sh -t all -d sdcard
 
 	finish_build build_updateimg $@
 }

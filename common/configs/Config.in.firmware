@@ -27,12 +27,24 @@ config RK_PACKAGE_FILE
 
 endif
 
+config RK_PACKAGE_UBOOT_FILE
+        string "custom package-file"
+        default "package-file"
+        help
+          Name of custom package-file under <CHIP_DIR>/.
+
 config RK_PARAMETER
 	string "parameter"
 	default "parameter-ab.txt" if RK_AB_UPDATE
 	default "parameter.txt"
 	help
 	  Name of parameter file under <CHIP_DIR>/.
+
+config RK_PARAMETER_UBOOT
+        string "parameter for uboot only"
+        default "parameter-buildroot-fit-uboot.txt"
+        help
+          Name of parameter file under <CHIP_DIR>/.
 
 comment "Misc image depends on recovery"
 	depends on RK_RECOVERY_CFG = ""

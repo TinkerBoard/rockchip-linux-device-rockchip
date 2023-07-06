@@ -111,7 +111,7 @@ build_debian()
 			linaro-$RK_DEBIAN_VERSION-$ARCH.tar.gz
 	fi
 
-	VERSION=$VERSION ARCH=$ARCH ./mk-rootfs-$RK_DEBIAN_VERSION.sh
+	VERSION=$VERSION VERSION_NUMBER=$VERSION_NUMBER ARCH=$ARCH ./mk-rootfs-$RK_DEBIAN_VERSION.sh
 	./mk-image.sh
 
 	ln -rsf "$PWD/linaro-rootfs.img" $ROOTFS_DIR/rootfs.ext4
@@ -135,6 +135,7 @@ clean_hook()
 {
 	rm -rf yocto/build/tmp yocto/build/*cache
 	rm -rf debian/binary
+	rm -rf $LIB_MODULES_DIR
 
 	if check_config RK_BUILDROOT_CFG &>/dev/null; then
 		rm -rf buildroot/output/$RK_BUILDROOT_CFG

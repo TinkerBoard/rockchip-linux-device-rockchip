@@ -302,11 +302,11 @@ main()
 	VERSION_NUMBER="$VERSION_NUMBER-$(date +%Y%m%d)"
 
 	if [ "$VERSION" == "debug" ]; then
-  		VERSION_NUMBER="$VERSION_NUMBER-debug"
+                export VERSION_NUMBER="$VERSION_NUMBER-debug"
 	elif [ "$VERSION" == "factory" ]; then
-  		VERSION_NUMBER="$VERSION_NUMBER-factory"
+                export VERSION_NUMBER="$VERSION_NUMBER-factory"
 	elif [ "$VERSION" == "release" ]; then
-  		VERSION_NUMBER="$VERSION_NUMBER-release"
+                export VERSION_NUMBER="$VERSION_NUMBER-release"
 	fi
 
 	load_config RK_ROOTFS_SYSTEM
@@ -322,6 +322,8 @@ main()
 	export RELEASE_NAME="$PROJECT_NAME-$VERSION_NUMBER"
 	export RECOVERY_RELEASE_NAME="$RELEASE_NAME-Recovery"
 	export SPINOR_RECOVERY_RELEASE_NAME="SPINOR-$RELEASE_NAME-Recovery"
+
+	export LIB_MODULES_DIR=$SDK_DIR/debian/lib_modules
 	#echo "RELEASE_NAME: $RELEASE_NAME"
 	#echo "RECOVERY_RELEASE_NAME: $RECOVERY_RELEASE_NAME"
 	#echo "SPINOR_RECOVERY_RELEASE_NAME: $SPINOR_RECOVERY_RELEASE_NAME"

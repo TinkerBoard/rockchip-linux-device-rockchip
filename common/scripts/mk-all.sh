@@ -100,6 +100,18 @@ build_save()
 	echo "Saving build logs..."
 	cp -rp "$RK_LOG_BASE_DIR" "$SAVE_DIR/"
 
+        if [ "$VERSION" == "release" ]; then
+                mv $SAVE_DIR/IMAGES/sdcard_full.img $SAVE_DIR/$RELEASE_NAME.img
+		mv $SAVE_DIR/IMAGES/sdcard_uboot.img $SAVE_DIR/$RECOVERY_RELEASE_NAME.img 
+		mv $SAVE_DIR/IMAGES/spinor_uboot.img $SAVE_DIR/$SPINOR_RECOVERY_RELEASE_NAME.img
+                zip -j -m -T $SAVE_DIR/$RELEASE_NAME.zip $SAVE_DIR/$RELEASE_NAME.img
+                zip -j -m -T $SAVE_DIR/$RECOVERY_RELEASE_NAME.zip $SAVE_DIR/$RECOVERY_RELEASE_NAME.img
+		zip -j -m -T $SAVE_DIR/$SPINOR_RECOVERY_RELEASE_NAME.zip $SAVE_DIR/$SPINOR_RECOVERY_RELEASE_NAME.img
+                sha256sum $SAVE_DIR/$RELEASE_NAME.zip > $SAVE_DIR/$RELEASE_NAME.zip.sha256sum
+                sha256sum $SAVE_DIR/$RECOVERY_RELEASE_NAME.zip > $SAVE_DIR/$RECOVERY_RELEASE_NAME.zip.sha256sum
+		sha256sum $SAVE_DIR/$SPINOR_RECOVERY_RELEASE_NAME.zip > $SAVE_DIR/$SPINOR_RECOVERY_RELEASE_NAME.zip.sha256sum
+        fi
+
 	finish_build
 }
 
