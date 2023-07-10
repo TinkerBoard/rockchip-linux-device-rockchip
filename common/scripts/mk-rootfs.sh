@@ -28,6 +28,8 @@ build_yocto()
 
 	"$SCRIPTS_DIR/check-yocto.sh"
 
+        cp -rf $LIB_MODULES_DIR/lib yocto/meta-asus/asus-overlay/overlay/
+
 	cd yocto
 	rm -f build/conf/local.conf
 
@@ -55,6 +57,9 @@ build_yocto()
 		echo "=========================================="
 	fi
 
+	sed -i -e '/IMAGE_VERSION/d' build/conf/local.conf
+	echo IMAGE_VERSION ?= \"$IMAGE_VERSION\" >> build/conf/local.conf
+
 	{
 		if [ "$RK_WIFIBT_CHIP" ]; then
 			echo "include include/wifibt.conf"
@@ -79,6 +84,7 @@ build_yocto()
 	} > build/conf/rksdk_override.conf
 
 	source oe-init-build-env build
+        bitbake -c cleansstate core-image-minimal
 	LANG=en_US.UTF-8 LANGUAGE=en_US.en LC_ALL=en_US.UTF-8 \
 		bitbake core-image-minimal -f -c rootfs -c image_complete \
 		-R conf/rksdk_override.conf

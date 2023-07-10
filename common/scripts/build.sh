@@ -309,36 +309,12 @@ main()
                 export VERSION_NUMBER="$VERSION_NUMBER-release"
 	fi
 
-	load_config RK_ROOTFS_SYSTEM
-
-	if [ "$RK_ROOTFS_SYSTEM" = "debian" ];then
-		PROJECT_NAME="Tinker_Board_3N-Debian-Bullseye"
-	elif [ "$RK_ROOTFS_SYSTEM" = "yocto" ];then
-		PROJECT_NAME="Tinker_Board_3N-Yocto-Kirkstone"
-		export IMAGE_VERSION="$VERSION_NUMBER"_"$VERSION"
-	fi
-	#echo "VERSION_NUMBER: $VERSION_NUMBER"
-
-	export RELEASE_NAME="$PROJECT_NAME-$VERSION_NUMBER"
-	export RECOVERY_RELEASE_NAME="$RELEASE_NAME-Recovery"
-	export SPINOR_RECOVERY_RELEASE_NAME="SPINOR-$RELEASE_NAME-Recovery"
-
-	export LIB_MODULES_DIR=$SDK_DIR/debian/lib_modules
-	#echo "RELEASE_NAME: $RELEASE_NAME"
-	#echo "RECOVERY_RELEASE_NAME: $RECOVERY_RELEASE_NAME"
-	#echo "SPINOR_RECOVERY_RELEASE_NAME: $SPINOR_RECOVERY_RELEASE_NAME"
-
 	# For Makefile
 	case "$@" in
 		make-targets | make-usage)
 			run_build_hooks "$@"
 			exit 0 ;;
 	esac
-
-	echo "VERSION_NUMBER: $VERSION_NUMBER"
-        echo "RELEASE_NAME: $RELEASE_NAME"
-        echo "RECOVERY_RELEASE_NAME: $RECOVERY_RELEASE_NAME"
-        echo "SPINOR_RECOVERY_RELEASE_NAME: $SPINOR_RECOVERY_RELEASE_NAME"
 
 	if [ ! -d "$RK_LOG_DIR" ]; then
 		mkdir -p "$RK_LOG_DIR"
@@ -413,6 +389,26 @@ main()
 	# Load config environments
 	source "$RK_CONFIG"
 	cp "$RK_CONFIG" "$RK_LOG_DIR"
+
+        #echo "$RK_ROOTFS_SYSTEM"
+
+        if [ "$RK_ROOTFS_SYSTEM" = "debian" ];then
+                PROJECT_NAME="Tinker_Board_3N-Debian-Bullseye"
+        elif [ "$RK_ROOTFS_SYSTEM" = "yocto" ];then
+                PROJECT_NAME="Tinker_Board_3N-Yocto-Kirkstone"
+                export IMAGE_VERSION="$VERSION_NUMBER"_"$VERSION"
+        fi
+
+        export RELEASE_NAME="$PROJECT_NAME-$VERSION_NUMBER"
+        export RECOVERY_RELEASE_NAME="$RELEASE_NAME-Recovery"
+        export SPINOR_RECOVERY_RELEASE_NAME="SPINOR-$RELEASE_NAME-Recovery"
+
+        echo "VERSION_NUMBER: $VERSION_NUMBER"
+        echo "RELEASE_NAME: $RELEASE_NAME"
+        echo "RECOVERY_RELEASE_NAME: $RECOVERY_RELEASE_NAME"
+        echo "SPINOR_RECOVERY_RELEASE_NAME: $SPINOR_RECOVERY_RELEASE_NAME"
+
+        export LIB_MODULES_DIR=$SDK_DIR/debian/lib_modules
 
 	# Save initial environment
 	if [ -e "$INITIAL_ENV" ]; then
