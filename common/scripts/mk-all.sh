@@ -20,6 +20,7 @@ build_all()
 
 	if [ "$RK_KERNEL_CFG" ]; then
 		"$SCRIPTS_DIR/mk-kernel.sh"
+		"$SCRIPTS_DIR/mk-kernel.sh" modules
 		"$SCRIPTS_DIR/mk-rootfs.sh"
 		"$SCRIPTS_DIR/mk-recovery.sh"
 	fi
