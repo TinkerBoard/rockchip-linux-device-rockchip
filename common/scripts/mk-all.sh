@@ -107,9 +107,11 @@ build_save()
                 zip -j -m -T $SAVE_DIR/$RELEASE_NAME.zip $SAVE_DIR/$RELEASE_NAME.img
                 zip -j -m -T $SAVE_DIR/$RECOVERY_RELEASE_NAME.zip $SAVE_DIR/$RECOVERY_RELEASE_NAME.img
 		zip -j -m -T $SAVE_DIR/$SPINOR_RECOVERY_RELEASE_NAME.zip $SAVE_DIR/$SPINOR_RECOVERY_RELEASE_NAME.img
-                sha256sum $SAVE_DIR/$RELEASE_NAME.zip > $SAVE_DIR/$RELEASE_NAME.zip.sha256sum
-                sha256sum $SAVE_DIR/$RECOVERY_RELEASE_NAME.zip > $SAVE_DIR/$RECOVERY_RELEASE_NAME.zip.sha256sum
-		sha256sum $SAVE_DIR/$SPINOR_RECOVERY_RELEASE_NAME.zip > $SAVE_DIR/$SPINOR_RECOVERY_RELEASE_NAME.zip.sha256sum
+		cd $SAVE_DIR
+                sha256sum $RELEASE_NAME.zip > $RELEASE_NAME.zip.sha256sum
+                sha256sum $RECOVERY_RELEASE_NAME.zip > $RECOVERY_RELEASE_NAME.zip.sha256sum
+		sha256sum $SPINOR_RECOVERY_RELEASE_NAME.zip > $SPINOR_RECOVERY_RELEASE_NAME.zip.sha256sum
+		cd -
         fi
 
 	finish_build
