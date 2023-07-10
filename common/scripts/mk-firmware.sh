@@ -1,5 +1,10 @@
 #!/bin/bash -e
 
+CONFIGTXT=release-config.txt
+if [ "$VERSION" == "factory" ]; then
+	CONFIGTXT=factory-config.txt
+fi
+
 message() {
 	echo -e "\e[36m$@\e[0m"
 }
@@ -42,6 +47,25 @@ pack_extra_partitions() {
 		fi
 
 		rk_extra_part_prepare $idx
+
+		if [ "$PART_NAME" = userdata ]; then
+			cp $OUTDIR/overlays/$CONFIGTXT $OUTDIR/config.txt
+			rm $OUTDIR/overlays/release-config.txt
+			rm $OUTDIR/overlays/factory-config.txt
+
+			message "Auto build dtbo in $PART_NAME..."
+			rm -f $OUTDIR/overlays/*.dtbo
+
+			for file in $OUTDIR/overlays/*.dts
+			do
+				dts=${file##*/}
+				dtbo=${dts%.*}
+				if [ "$dts" = "*.dts"  ]; then
+					break
+				fi
+				dtc -@ -O dtb -o $OUTDIR/overlays/$dtbo.dtbo $OUTDIR/overlays/$dts
+			done
+		fi
 
 		if [ "$SIZE" = max ]; then
 			SIZE="$(partition_size_kb "$PART_NAME")K"
