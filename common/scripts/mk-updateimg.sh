@@ -27,6 +27,7 @@ gen_package_file()
 
 		case $part in
 			backup) echo -e "backup\tRESERVED"; continue ;;
+			splash) echo -e "splash\tRESERVED"; continue ;;
 			system|system_[ab]) IMAGE=rootfs.img ;;
 			*_a) IMAGE="${part%_a}.img" ;;
 			*_b) IMAGE="${part%_b}.img" ;;

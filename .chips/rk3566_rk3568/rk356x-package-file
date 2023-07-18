@@ -13,6 +13,7 @@ boot		boot.img
 recovery	recovery.img
 rootfs		rootfs.img
 #oem		mage/oem.img
+splash          RESERVED
 userdata	userdata.img
 # 要写入backup分区的文件就是自身（update.img）
 # SELF 是关键字，表示升级文件（update.img）自身
