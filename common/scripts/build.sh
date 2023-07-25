@@ -393,9 +393,9 @@ main()
         #echo "$RK_ROOTFS_SYSTEM"
 
         if [ "$RK_ROOTFS_SYSTEM" = "debian" ];then
-                PROJECT_NAME="Tinker_Board_3N-Debian-Bullseye"
+                PROJECT_NAME="$RK_PROJECT_NAME-Debian-Bullseye"
         elif [ "$RK_ROOTFS_SYSTEM" = "yocto" ];then
-                PROJECT_NAME="Tinker_Board_3N-Yocto-Kirkstone"
+                PROJECT_NAME="$RK_PROJECT_NAME-Yocto-Kirkstone"
                 export IMAGE_VERSION="$VERSION_NUMBER"_"$VERSION"
         fi
 
