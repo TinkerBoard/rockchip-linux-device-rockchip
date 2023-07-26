@@ -59,6 +59,7 @@ build_yocto()
 
 	sed -i -e '/IMAGE_VERSION/d' build/conf/local.conf
 	echo IMAGE_VERSION ?= \"$IMAGE_VERSION\" >> build/conf/local.conf
+	echo RK_PROJECT_NAME ?= \"$RK_PROJECT_NAME\" >> build/conf/local.conf
 
 	{
 		if [ "$RK_WIFIBT_CHIP" ]; then

@@ -396,7 +396,7 @@ main()
                 PROJECT_NAME="$RK_PROJECT_NAME-Debian-Bullseye"
         elif [ "$RK_ROOTFS_SYSTEM" = "yocto" ];then
                 PROJECT_NAME="$RK_PROJECT_NAME-Yocto-Kirkstone"
-                export IMAGE_VERSION="$VERSION_NUMBER"_"$VERSION"
+                export IMAGE_VERSION="$VERSION_NUMBER"
         fi
 
         export RELEASE_NAME="$PROJECT_NAME-$VERSION_NUMBER"
