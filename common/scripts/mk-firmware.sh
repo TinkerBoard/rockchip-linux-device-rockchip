@@ -112,6 +112,11 @@ build_firmware()
 			"$RK_FIRMWARE_DIR/misc.img"
 	fi
 
+        if [ "$RK_SPLASH_IMG" ]; then
+                link_image "$RK_IMAGE_DIR/$RK_SPLASH_IMG" \
+                        "$RK_FIRMWARE_DIR/splash.img"
+        fi
+
 	pack_extra_partitions
 
 	if [ "$RK_SECURITY" ]; then

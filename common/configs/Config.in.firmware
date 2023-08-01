@@ -61,6 +61,13 @@ config RK_MISC_IMG
 
 endif
 
+config RK_SPLASH_IMG
+        string "splash image"
+        default "blank-splash.img"
+        help
+          Name of splash image under <RK_IMAGE_DIR>/.
+          Set "" for no splash.
+
 if RK_KERNEL_CFG != ""
 
 config RK_USE_FIT_IMG
