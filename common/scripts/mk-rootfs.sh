@@ -111,10 +111,17 @@ build_debian()
 	echo "=========================================="
 
 	cd debian
-	if [ ! -f linaro-$RK_DEBIAN_VERSION-alip-*.tar.gz ]; then
+
+        ROOTFS_BASE_DIR="../rootfs-base"
+
+        if [ ! -e $ROOTFS_BASE_DIR ]; then
+                ROOTFS_BASE_DIR="."
+        fi
+
+	if [ ! -f $ROOTFS_BASE_DIR/linaro-$RK_DEBIAN_VERSION-alip-*.tar.gz ]; then
 		RELEASE=$RK_DEBIAN_VERSION TARGET=desktop ARCH=$ARCH \
 			./mk-base-debian.sh
-		ln -sf linaro-$RK_DEBIAN_VERSION-alip-*.tar.gz \
+		ln -sf $ROOTFS_BASE_DIR/linaro-$RK_DEBIAN_VERSION-alip-*.tar.gz \
 			linaro-$RK_DEBIAN_VERSION-$ARCH.tar.gz
 	fi
 
