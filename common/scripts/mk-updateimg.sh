@@ -59,10 +59,12 @@ build_updateimg()
 	cd "$IMAGE_DIR"
 
 	# Prepare images
-	ln -rsf "$RK_FIRMWARE_DIR"/* .
+	ln -rsf "$RK_ROCKDEV_DIR"/* .
+	rm -f update.img
 	if [ "$TYPE" = sdcard ]; then
 		ln -rsf "$RK_IMAGE_DIR/sdupdate-ab-misc.img" misc.img
-		ln -rsf "$RK_IMAGE_DIR/parameter-sdupdate.txt" parameter.txt
+		ln -rsf "$RK_DATA_DIR/parameter-sdupdate.txt" \
+			parameter.txt
 
 		# Not packing rootfs partition for sdcard
 		rm -f rootfs.img
@@ -186,8 +188,8 @@ build_ab_updateimg()
 usage_hook()
 {
 	echo -e "updateimg                         \tbuild update image"
-	echo -e "otapackage                        \tbuild OTA update image"
-	echo -e "sdpackage                         \tbuild SDcard update image"
+	echo -e "otapackage                        \tbuild A/B OTA update image"
+	echo -e "sdpackage                         \tbuild A/B SDcard update image"
 }
 
 clean_hook()

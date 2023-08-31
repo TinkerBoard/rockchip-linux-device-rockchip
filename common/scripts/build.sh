@@ -25,6 +25,8 @@ usage()
 	echo -e "help                              \tusage"
 	echo ""
 	echo "Default option is 'allsave'."
+
+	rm -f "$INITIAL_ENV"
 	exit 0
 }
 
@@ -114,6 +116,39 @@ start_log()
 	ln -rsf "$LOG_FILE" "$RK_LOG_DIR/$1.log"
 	echo "# $(date +"%F %T")" >> "$LOG_FILE"
 	echo "$LOG_FILE"
+}
+
+get_toolchain()
+{
+	TOOLCHAIN_ARCH="${1/arm64/aarch64}"
+
+	MACHINE=$(uname -m)
+	if [ "$MACHINE" = x86_64 ]; then
+		TOOLCHAIN_VENDOR="${2:-none}"
+		TOOLCHAIN_OS="${3:-linux}"
+
+		# RV1126 uses custom toolchain
+		if [ "$RK_CHIP_FAMILY" = "rv1126_rv1109" ]; then
+			TOOLCHAIN_VENDOR=rockchip
+		fi
+
+		TOOLCHAIN_DIR="$(realpath prebuilts/gcc/*/$TOOLCHAIN_ARCH)"
+		GCC="$(find "$TOOLCHAIN_DIR" \
+			-name "*$TOOLCHAIN_VENDOR-$TOOLCHAIN_OS-*-gcc" | \
+			head -n 1)"
+		if [ ! -x "$GCC" ]; then
+			echo "No prebuilt GCC toolchain!"
+			exit 1
+		fi
+	elif [ "$TOLLCHAIN_ARCH" = aarch64 -a "$MACHINE" != aarch64 ]; then
+		GCC=aarch64-linux-gnu-gcc
+	elif [ "$TOLLCHAIN_ARCH" = arm -a "$MACHINE" != armv7l ]; then
+		GCC=arm-linux-gnueabihf-gcc
+	else
+		GCC=gcc
+	fi
+
+	echo "${GCC%gcc}"
 }
 
 # For developing shell only
@@ -213,37 +248,6 @@ option_check()
 	return 1
 }
 
-get_toolchain()
-{
-	TOOLCHAIN_ARCH="${1/arm64/aarch64}"
-
-	MACHINE=$(uname -m)
-	if [ "$MACHINE" = x86_64 ]; then
-		# RV1126 uses custom toolchain
-		if [ "$RK_CHIP_FAMILY" = "rv1126_rv1109" ]; then
-			TOOLCHAIN_OS=rockchip
-		else
-			TOOLCHAIN_OS=none
-		fi
-
-		TOOLCHAIN_DIR="$(realpath prebuilts/gcc/*/$TOOLCHAIN_ARCH)"
-		GCC="$(find "$TOOLCHAIN_DIR" -name "*$TOOLCHAIN_OS*-gcc" | \
-			head -n 1)"
-		if [ ! -x "$GCC" ]; then
-			echo "No prebuilt GCC toolchain!"
-			exit 1
-		fi
-	elif [ "$TOLLCHAIN_ARCH" = aarch64 -a "$MACHINE" != aarch64 ]; then
-		GCC=aarch64-linux-gnu-gcc
-	elif [ "$TOLLCHAIN_ARCH" = arm -a "$MACHINE" != armv7l ]; then
-		GCC=arm-linux-gnueabihf-gcc
-	else
-		GCC=gcc
-	fi
-
-	echo "${GCC%gcc}"
-}
-
 main()
 {
 	[ -z "$DEBUG" ] || set -x
@@ -252,8 +256,10 @@ main()
 	set -eE
 
 	# Save intial envionments
+	unset INITIAL_SESSION
 	INITIAL_ENV=$(mktemp -u)
 	if [ -z "$RK_SESSION" ]; then
+		INITIAL_SESSION=1
 		env > "$INITIAL_ENV"
 	fi
 
@@ -267,7 +273,9 @@ main()
 	export CHIP_DIR="$DEVICE_DIR/.chip"
 
 	export RK_DATA_DIR="$COMMON_DIR/data"
+	export RK_TOOL_DIR="$COMMON_DIR/tools"
 	export RK_IMAGE_DIR="$COMMON_DIR/images"
+	export RK_KBUILD_DIR="$COMMON_DIR/linux-kbuild"
 	export RK_CONFIG_IN="$COMMON_DIR/configs/Config.in"
 
 	export RK_BUILD_HOOK_DIR="$COMMON_DIR/build-hooks"
@@ -277,16 +285,18 @@ main()
 
 	export PARTITION_HELPER="$SCRIPTS_DIR/partition-helper"
 
-	export RK_OUTDIR="$SDK_DIR/output"
-	export RK_LOG_BASE_DIR="$RK_OUTDIR/log"
 	export RK_SESSION="${RK_SESSION:-$(date +%F_%H-%M-%S)}"
-	export RK_LOG_DIR="$RK_LOG_BASE_DIR/$RK_SESSION"
+
+	export RK_OUTDIR="$SDK_DIR/output"
+	export RK_SESSION_DIR="$RK_OUTDIR/sessions"
+	export RK_LOG_BASE_DIR="$RK_OUTDIR/log"
+	export RK_LOG_DIR="$RK_SESSION_DIR/$RK_SESSION"
+	export RK_INITIAL_ENV="$RK_LOG_DIR/initial.env"
+	export RK_CUSTOM_ENV="$RK_LOG_DIR/custom.env"
+	export RK_FINAL_ENV="$RK_LOG_DIR/final.env"
 	export RK_ROCKDEV_DIR="$SDK_DIR/rockdev"
 	export RK_FIRMWARE_DIR="$RK_OUTDIR/firmware"
 	export RK_SECURITY_FIRMWARE_DIR="$RK_OUTDIR/security-firmware"
-	export RK_INITIAL_ENV="$RK_OUTDIR/initial.env"
-	export RK_CUSTOM_ENV="$RK_OUTDIR/custom.env"
-	export RK_FINAL_ENV="$RK_OUTDIR/final.env"
 	export RK_CONFIG="$RK_OUTDIR/.config"
 	export RK_DEFCONFIG_LINK="$RK_OUTDIR/defconfig"
 
@@ -313,26 +323,15 @@ main()
 	case "$@" in
 		make-targets | make-usage)
 			run_build_hooks "$@"
+			rm -f "$INITIAL_ENV"
 			exit 0 ;;
 	esac
 
-	if [ ! -d "$RK_LOG_DIR" ]; then
-		mkdir -p "$RK_LOG_DIR"
-		rm -rf "$RK_LOG_BASE_DIR/latest"
-		ln -rsf "$RK_LOG_DIR" "$RK_LOG_BASE_DIR/latest"
-		echo -e "\e[33mLog saved at $RK_LOG_DIR\e[0m"
-		echo
-	fi
-
-
-	# Drop old logs
-	cd "$RK_LOG_BASE_DIR"
-	rm -rf $(ls -t | sed '1,10d')
+	# Prepare firmware dirs
+	mkdir -p "$RK_FIRMWARE_DIR" "$RK_SECURITY_FIRMWARE_DIR"
 
 	cd "$SDK_DIR"
 	[ -f README.md ] || ln -rsf "$COMMON_DIR/README.md" .
-
-	mkdir -p "$RK_FIRMWARE_DIR" "$RK_SECURITY_FIRMWARE_DIR"
 
 	# TODO: Remove it in the repo manifest.xml
 	rm -f envsetup.sh
@@ -374,6 +373,28 @@ main()
 		usage
 	done
 
+	# Prepare log dirs
+	if [ ! -d "$RK_LOG_DIR" ]; then
+		rm -rf "$RK_LOG_BASE_DIR" "$RK_LOG_DIR" "$RK_SESSION_DIR/latest"
+		mkdir -p "$RK_LOG_DIR"
+		ln -rsf "$RK_SESSION_DIR" "$RK_LOG_BASE_DIR"
+		ln -rsf "$RK_LOG_DIR" "$RK_SESSION_DIR/latest"
+		echo -e "\e[33mLog saved at $RK_LOG_DIR\e[0m"
+		echo
+	fi
+
+	# Drop old logs
+	cd "$RK_LOG_BASE_DIR"
+	rm -rf $(ls -t | sed '1,10d')
+	cd "$SDK_DIR"
+
+	# Save initial envionments
+	if [ "$INITIAL_SESSION" ]; then
+		rm -f "$RK_INITIAL_ENV"
+		mv "$INITIAL_ENV" "$RK_INITIAL_ENV"
+		ln -rsf "$RK_INITIAL_ENV" "$RK_OUTDIR/"
+	fi
+
 	# Init stage (preparing SDK configs, etc.)
 	run_build_hooks init $OPTIONS
 	rm -f "$RK_OUTDIR/.tmpconfig*"
@@ -410,12 +431,17 @@ main()
 
         export LIB_MODULES_DIR=$SDK_DIR/debian/lib_modules
 
-	# Save initial environment
-	if [ -e "$INITIAL_ENV" ]; then
-		cat "$INITIAL_ENV" > "$RK_INITIAL_ENV"
-		rm -f "$RK_CUSTOM_ENV"
+	if [ -z "$INITIAL_SESSION" ]; then
+		# Inherit session environments
+		sed -n 's/^\(RK_.*=\)\(.*\)/\1"\2"/p' "$RK_FINAL_ENV" > \
+			"$INITIAL_ENV"
+		source "$INITIAL_ENV"
+		rm -f "$INITIAL_ENV"
+	else
+		# Detect and save custom environments
 
 		# Find custom environments
+		rm -f "$RK_CUSTOM_ENV"
 		for cfg in $(grep "^RK_" "$RK_INITIAL_ENV" || true); do
 			env | grep -q "^${cfg//\"/}$" || \
 				echo "$cfg" >> "$RK_CUSTOM_ENV"
@@ -423,13 +449,14 @@ main()
 
 		# Allow custom environments overriding
 		if [ -e "$RK_CUSTOM_ENV" ]; then
+			ln -rsf "$RK_CUSTOM_ENV" "$RK_OUTDIR/"
+
 			echo -e "\e[31mWARN: Found custom environments: \e[0m"
 			cat "$RK_CUSTOM_ENV"
 
 			echo -e "\e[31mAssuming that is expected, please clear them if otherwise.\e[0m"
 			read -t 10 -p "Press enter to continue."
 			source "$RK_CUSTOM_ENV"
-			cp "$RK_CUSTOM_ENV" "$RK_LOG_DIR"
 
 			if grep -q "^RK_KERNEL_VERSION=" "$RK_CUSTOM_ENV"; then
 				echo -e "\e[31mCustom RK_KERNEL_VERSION ignored!\e[0m"
@@ -452,19 +479,12 @@ main()
 
 	if [ "$RK_KERNEL_CFG" ]; then
 		export RK_KERNEL_TOOLCHAIN="$(get_toolchain "$RK_KERNEL_ARCH")"
-		echo "Toolchain for kernel:"
-		echo "${RK_KERNEL_TOOLCHAIN:-gcc}"
 
 		CPUS=$(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 1)
-		export KMAKE="make -C kernel/ -j$(( $CPUS + 1 )) \
+		export KMAKE="make -C "$SDK_DIR/kernel/" -j$(( $CPUS + 1 )) \
 			CROSS_COMPILE=$RK_KERNEL_TOOLCHAIN ARCH=$RK_KERNEL_ARCH"
-		export RK_KERNEL_VERSION_REAL=$(kernel_version_real)
-	fi
 
-	if [ "$RK_UBOOT_CFG" ]; then
-		export RK_UBOOT_TOOLCHAIN="$(get_toolchain "$RK_UBOOT_ARCH")"
-		echo "Toolchain for loader (u-boot):"
-		echo "${RK_UBOOT_TOOLCHAIN:-gcc}"
+		export RK_KERNEL_VERSION_REAL=$(kernel_version_real)
 	fi
 
 	# Handle special commands
@@ -489,8 +509,9 @@ main()
 	esac
 
 	# Save final environments
+	rm -f "$RK_FINAL_ENV"
 	env > "$RK_FINAL_ENV"
-	cp "$RK_FINAL_ENV" "$RK_LOG_DIR"
+	ln -rsf "$RK_FINAL_ENV" "$RK_OUTDIR/"
 
 	# Log configs
 	echo

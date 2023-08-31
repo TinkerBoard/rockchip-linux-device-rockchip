@@ -43,11 +43,11 @@ do_build()
 
 	check_config RK_KERNEL_DTS_NAME RK_KERNEL_CFG RK_BOOT_IMG || return 0
 
-	if [ ! "$DRY_RUN" ]; then
+	run_command $KMAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS
+
+	if [ -z "$DRY_RUN" ]; then
 		"$SCRIPTS_DIR/check-kernel.sh"
 	fi
-
-	run_command $KMAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS
 
 	case "$1" in
 		kernel-config)
@@ -127,21 +127,29 @@ pre_build_hook()
 {
 	check_config RK_KERNEL_CFG || return 0
 
+	echo "Toolchain for kernel:"
+	echo "${RK_KERNEL_TOOLCHAIN:-gcc}"
+	echo
+
 	case "$1" in
 		kernel-make | kmake)
-			shift;
+			shift
+			[ "$1" != cmds ] || shift
+
 			if [ ! -r kernel/.config ]; then
 				run_command $KMAKE $RK_KERNEL_CFG \
 					$RK_KERNEL_CFG_FRAGMENTS
 			fi
 			run_command $KMAKE $@
-			finish_build kmake $@
 			;;
 		kernel-config)
 			do_build $@
-			finish_build $@
 			;;
 	esac
+
+	if [ -z "$DRY_RUN" ]; then
+		finish_build $@
+	fi
 }
 
 pre_build_hook_dry()
@@ -154,6 +162,10 @@ build_hook()
 {
 	check_config RK_KERNEL_DTS_NAME RK_KERNEL_CFG RK_BOOT_IMG || return 0
 
+	echo "Toolchain for kernel:"
+	echo "${RK_KERNEL_TOOLCHAIN:-gcc}"
+	echo
+
 	if echo $1 | grep -q "^kernel-"; then
 		if [ "$RK_KERNEL_VERSION" != "${1#kernel-}" ]; then
 			echo -ne "\e[35m"
@@ -165,7 +177,9 @@ build_hook()
 
 	do_build $@
 
-	[ ! "$DRY_RUN" ] || return 0
+	if [ "$DRY_RUN" ]; then
+		return 0
+	fi
 
 	if echo $1 | grep -q "^kernel"; then
 		ln -rsf "kernel/$RK_BOOT_IMG" "$RK_FIRMWARE_DIR/boot.img"
@@ -185,29 +199,38 @@ post_build_hook()
 {
 	check_config RK_KERNEL_DTS_NAME RK_KERNEL_CFG RK_BOOT_IMG || return 0
 
-	OUTPUT_DIR="${2:-"$RK_OUTDIR"}"
+	[ "$1" = "linux-headers" ] || return 0
+	shift
+
+	[ "$1" != cmds ] || shift
+	OUTPUT_FILE="${2:-"$RK_OUTDIR"}/linux-headers.tar"
+	mkdir -p "$(dirname "OUTPUT_DIR")"
+
 	HEADER_FILES_SCRIPT=$(mktemp)
 
 	if [ "$DRY_RUN" ]; then
-		echo -e "\e[35mCommands of building $1:\e[0m"
+		echo -e "\e[35mCommands of building linux-headers:\e[0m"
 	else
-		echo "Saving linux-headers to $OUTPUT_DIR"
+		echo "Saving linux-headers to $OUTPUT_FILE"
 	fi
 
-	run_command cd kernel
+	run_command $KMAKE $RK_KERNEL_CFG $RK_KERNEL_CFG_FRAGMENTS
+	run_command $KMAKE modules_prepare
 
 	cat << EOF > "$HEADER_FILES_SCRIPT"
 {
 	# Based on kernel/scripts/package/builddeb
 	find . arch/$RK_KERNEL_ARCH -maxdepth 1 -name Makefile\*
-	find include scripts -type f -o -type l
+	find include -type f -o -type l
 	find arch/$RK_KERNEL_ARCH -name module.lds -o -name Kbuild.platforms -o -name Platform
 	find \$(find arch/$RK_KERNEL_ARCH -name include -o -name scripts -type d) -type f
-	find arch/$RK_KERNEL_ARCH/include Module.symvers include scripts -type f
+	find arch/$RK_KERNEL_ARCH/include Module.symvers -type f
 	echo .config
 } | tar --no-recursion --ignore-failed-read -T - \
-	-cf "$OUTPUT_DIR/linux-headers.tar"
+	-cf "$OUTPUT_FILE"
 EOF
+
+	run_command cd "$SDK_DIR/kernel"
 
 	cat "$HEADER_FILES_SCRIPT"
 
@@ -215,7 +238,18 @@ EOF
 		. "$HEADER_FILES_SCRIPT"
 	fi
 
+	case "$RK_KERNEL_KBUILD_ARCH" in
+		host) run_command tar -uf "$OUTPUT_FILE" scripts tools ;;
+		*)
+			run_command cd "$RK_KBUILD_DIR/$RK_KERNEL_KBUILD_ARCH"
+			run_command cd "linux-kbuild-$RK_KERNEL_VERSION_REAL"
+			run_command tar -uf "$OUTPUT_FILE" .
+			;;
+	esac
+
 	run_command cd "$SDK_DIR"
+
+	rm -f "$HEADER_FILES_SCRIPT"
 }
 
 post_build_hook_dry()

@@ -9,6 +9,7 @@ menu "Recovery (buildroot)"
 
 config RK_RECOVERY_BASE_CFG
 	string "buildroot recovery base cfg (rockchip_<cfg>_recovery_defconfig)"
+	default "" if RK_AB_UPDATE
 	default RK_CHIP if RK_CHIP_FAMILY = "rk3566_rk3568"
 	default RK_CHIP_FAMILY
 	help
@@ -21,13 +22,10 @@ config RK_RECOVERY_CFG
 	string
 	default "rockchip_${RK_RECOVERY_BASE_CFG}_recovery"
 
-if RK_USE_FIT_IMG
-
 config RK_RECOVERY_FIT_ITS
 	string "its script for FIT recovery image"
+	depends on RK_USE_FIT_IMG
 	default "boot4recovery.its"
-
-endif
 
 endif
 

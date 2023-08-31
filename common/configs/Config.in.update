@@ -1,5 +1,10 @@
 #
 
+comment "RTOS doesn't use update image"
+	depends on RK_RTOS
+
+if !RK_RTOS
+
 menu "Update (OTA and A/B)"
 
 config RK_UPDATE
@@ -8,37 +13,41 @@ config RK_UPDATE
 
 if RK_UPDATE
 
-choice
-	prompt "package-file for OTA"
+config RK_AB_UPDATE
+	bool "A/B update"
 
-config RK_OTA_PACKAGE_FILE_DEFAULT
+if RK_AB_UPDATE
+
+choice
+	prompt "package-file for A/B OTA"
+
+config RK_AB_OTA_PACKAGE_FILE_DEFAULT
 	bool "auto"
 	help
 	  Auto-generated.
 
-config RK_OTA_PACKAGE_FILE_CUSTOM
+config RK_AB_OTA_PACKAGE_FILE_CUSTOM
 	bool "custom"
 	help
-	  Use custom OTA package-file under <CHIP_DIR>/.
+	  Use custom A/B OTA package-file under <CHIP_DIR>/.
 
-endchoice # OTA package-file
+endchoice # A/B OTA package-file
 
-if RK_OTA_PACKAGE_FILE_CUSTOM
+if RK_AB_OTA_PACKAGE_FILE_CUSTOM
 
-config RK_OTA_PACKAGE_FILE
-	string "custom package-file for OTA"
+config RK_AB_OTA_PACKAGE_FILE
+	string "custom package-file for A/B OTA"
 	help
-	  Name of custom package-file for OTA under <CHIP_DIR>/.
+	  Name of custom package-file for A/B OTA under <CHIP_DIR>/.
 
 endif
 
-config RK_AB_UPDATE
-	bool "A/B update"
-
 config RK_AB_UPDATE_SDCARD
-	bool "SDcard update image for A/B update"
-	depends on RK_AB_UPDATE
+	bool "A/B SDcard update"
 
+endif
 endif
 
 endmenu # Update
+
+endif

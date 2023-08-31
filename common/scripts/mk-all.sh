@@ -11,8 +11,16 @@ build_all()
 	echo "          Start building all images"
 	echo "=========================================="
 
-	rm -rf $RK_FIRMWARE_DIR
-	mkdir -p $RK_FIRMWARE_DIR
+	rm -rf "$RK_FIRMWARE_DIR" "$RK_SECURITY_FIRMWARE_DIR"
+	mkdir -p "$RK_FIRMWARE_DIR" "$RK_SECURITY_FIRMWARE_DIR"
+
+	if [ "$RK_RTOS" ]; then
+		"$SCRIPTS_DIR/mk-loader.sh"
+		"$SCRIPTS_DIR/mk-rtos.sh"
+		"$SCRIPTS_DIR/mk-firmware.sh"
+		finish_build
+		return 0
+	fi
 
 	if [ "$RK_SECURITY" ]; then
 		"$SCRIPTS_DIR/mk-security.sh" security_check
@@ -91,8 +99,7 @@ build_save()
 		.repo/repo/repo forall -j $(( $CPUS + 1 )) -c \
 			"\"$SCRIPTS_DIR/save-patches.sh\" \
 			\"$PATCHES_DIR/\$REPO_PATH\" \$REPO_PATH \$REPO_LREV"
-		install -D -m 0755 "$RK_DATA_DIR/misc/apply-all.sh" \
-			"$PATCHES_DIR"
+		install -D -m 0755 "$RK_DATA_DIR/apply-all.sh" "$PATCHES_DIR"
 	fi
 
 	cp "$RK_FINAL_ENV" "$RK_CONFIG" "$RK_DEFCONFIG_LINK" "$SAVE_DIR/"
