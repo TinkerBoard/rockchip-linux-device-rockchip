@@ -25,6 +25,11 @@
 
 conf:auto_ums=on
 
+## Note: HDMI/DSI0: There must be at least one display setting. If not, HDMI is defaulted. ##
+
+conf:HDMI=on
+conf:DSI0=off
+
 ##### Tinker Power Management #####
 
 cpu_governor=ondemand
