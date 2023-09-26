@@ -1,23 +1,40 @@
 ##### Hardware Interface Config #####
 
 ## Note: When there is any PIN conflict, enable the latter setting.  ##
-## | PIN | ALT Fun 1 | ALT Fun 2 | ALT Fun 3 | ALT Fun4 | ##
-## |   2 |  i2s3_2ch |      spi3 |     pwm14 |          | ##
-## |   4 |  i2s3_2ch |      spi3 |     pwm15 |          | ##
-## |   6 |  i2s3_2ch |      spi3 | spdif_8ch |          | ##
-## |   8 |  i2s3_2ch |      spi3 |     pwm12 |    uart9 | ##
-## |  10 |  i2s3_2ch |      spi3 |     pwm13 |    uart9 | ##
+## | PIN | ALT Fun 1 | ALT Fun 2 | ##
+## |   8 |      pwm2 |     uart0 | ##
+## |  10 |      pwm1 |     uart0 | ##
+## |  11 |     pwm14 |      spi3 | ##
+## |  13 |     pwm15 |      spi3 | ##
+## |  15 |     pwm12 |      spi3 | ##
+## |  16 |      pwm0 |     uart0 | ##
+## |  18 |      pwm5 |     uart0 | ##
+## |  22 |     pwm15 | spdif_8ch | ##
+## |  29 |     pwm13 |      spi3 | ##
+## |  32 |      pwm9 |     uart4 | ##
+## |  33 |      pwm8 |     uart4 | ##
 
+#intf:uart0=off
+#intf:uart1=off
 #intf:uart4=off
+#intf:i2c1=off
 #intf:i2c5=off
-#intf:uart9=off
+#intf:i2s3_2ch=off
+#intf:spi2=off
+#intf:spi3=off
+#intf:spdif_8ch=off
+#intf:pwm0=off
+#intf:pwm1=off
+#intf:pwm2=off
+#intf:pwm5=off
+#intf:pwm7=off
+#intf:pwm8=off
+#intf:pwm9=off
 #intf:pwm12=off
 #intf:pwm13=off
 #intf:pwm14=off
 #intf:pwm15=off
-#intf:spdif_8ch=off
-#intf:spi3=off
-#intf:i2s3_2ch=off
+#intf:xin32k=off
 
 ##### Driver Config #####
 
